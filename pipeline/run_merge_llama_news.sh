@@ -26,8 +26,8 @@ for langs in $langslist; do
     # iterate through the systems
     for system in $systems; do
 
-        parasrc="/home/user/shaita/data_old/paras_cleaned/${langs}.para.source.asis.txt"
-        llamafile="/home/user/shaita/news_to_align/${langs}.sent.${system}.csv"
+        parasrc="inputs/paras_cleaned/${langs}.para.source.asis.txt"
+        llamafile="/home/user/shaita/news_to_merge/${langs}.sent.${system}.csv"
 
         # merge the sentences
         python merge_llama_news.py -ps $parasrc -lf $llamafile
