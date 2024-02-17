@@ -1,6 +1,7 @@
 # specific files and folders #
 data/
 output/
+viz/
 
 # Compiled source #
 ###################
