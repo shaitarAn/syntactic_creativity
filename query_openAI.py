@@ -2,9 +2,10 @@ import os
 import openai
 import requests
 import json
+from translation.config import *
 
-openai.organization = "org-HjWBseLU0iDzg4cx01nO6JrY"
-openai.api_key = "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"
+openai.organization = ORGANIZATION
+openai.api_key = OPENAI_API_KEY
 
 task = """
 # Calculate mean xwr_mean for paragraphs
