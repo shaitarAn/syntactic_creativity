@@ -40,6 +40,7 @@ for entry in json_data:
     src = entry['source_lang']
     tgt = entry['target_lang']
     book = f"{src}-{tgt}"
+    choice = entry['choice']
 
     if entry['choice'] == "text1":
         ch = entry["text1_tag"]
@@ -49,7 +50,18 @@ for entry in json_data:
     if book not in books:
         books[book] = {"human": {"src": [], "tgt": []}, "gpt_sent": {"src": [], "tgt": []}, "gpt_para": {"src": [], "tgt": []}, "nmt": {"src": [], "tgt": []}}
 
-    choices2list = [entry["eval"], ch, entry['text1_tag'], entry['text2_tag'], entry['difficult_choice'], entry['comment'], entry['text1'], entry['text2']]
+    if choice == "text1":
+        choiceLabel = entry["text1_tag"]
+        choiceText = entry["text1"]
+        rejectLabel = entry["text2_tag"]
+        rejectText = entry["text2"]
+    else:
+        choiceLabel = entry["text2_tag"]
+        choiceText = entry["text2"]
+        rejectLabel = entry["text1_tag"]
+        rejectText = entry["text1"]
+
+    choices2list = [entry["eval"], entry["source"].replace("\n", " "), choiceLabel, choiceText.replace("\n", " "), rejectLabel, rejectText.replace("\n", " "), entry['difficult_choice'], entry['comment']]
     choices.append(choices2list)
 
     if entry['source'] not in books[book]["human"]["src"]:
