@@ -47,7 +47,7 @@ for entry in json_data:
         ch = entry["text2_tag"]
 
     if book not in books:
-        books[book] = {"human": {"src": [], "tgt": []}, "gpt_sent": {"src": [], "tgt": []}, "gpt_para": {"src": [], "tgt": []}, "gtr": {"src": [], "tgt": []}}
+        books[book] = {"human": {"src": [], "tgt": []}, "gpt_sent": {"src": [], "tgt": []}, "gpt_para": {"src": [], "tgt": []}, "nmt": {"src": [], "tgt": []}}
 
     choices2list = [entry["eval"], ch, entry['text1_tag'], entry['text2_tag'], entry['difficult_choice'], entry['comment'], entry['text1'], entry['text2']]
     choices.append(choices2list)
@@ -65,9 +65,9 @@ for entry in json_data:
         books[book]["gpt_para"]["tgt"].append(entry['text1'])
         books[book]["gpt_para"]["src"].append(entry['source'])
 
-    if entry['text1'] not in books[book]["gtr"]["tgt"] and entry['text1_tag'] == "gtr":
-        books[book]["gtr"]["tgt"].append(entry['text1'])
-        books[book]["gtr"]["src"].append(entry['source'])
+    if entry['text1'] not in books[book]["nmt"]["tgt"] and entry['text1_tag'] == "gtr":
+        books[book]["nmt"]["tgt"].append(entry['text1'])
+        books[book]["nmt"]["src"].append(entry['source'])
 
     if entry['text2'] not in books[book]["gpt_sent"]["tgt"] and entry['text2_tag'] == "sent":
         books[book]["gpt_sent"]["tgt"].append(entry['text2'])
@@ -77,29 +77,29 @@ for entry in json_data:
         books[book]["gpt_para"]["tgt"].append(entry['text2'])
         books[book]["gpt_para"]["src"].append(entry['source'])
 
-    if entry['text2'] not in books[book]["gtr"]["tgt"] and entry['text2_tag'] == "gtr":
-        books[book]["gtr"]["tgt"].append(entry['text2'])
-        books[book]["gtr"]["src"].append(entry['source'])        
+    if entry['text2'] not in books[book]["nmt"]["tgt"] and entry['text2_tag'] == "gtr":
+        books[book]["nmt"]["tgt"].append(entry['text2'])
+        books[book]["nmt"]["src"].append(entry['source'])        
             
 
-# reorder the data to make sure that the gtr paras are in the same order as the human paras
+# reorder the data to make sure that the nmt paras are in the same order as the human paras
 for book in books.keys():
     human_src = books[book]["human"]["src"]
     human_tgt = books[book]["human"]["tgt"]
-    new_gtr_src = []
-    new_gtr_tgt = []
+    new_nmt_src = []
+    new_nmt_tgt = []
 
     for s, t in zip(human_src, human_tgt):
-        if s in books[book]["gtr"]["src"]:
-            idx = books[book]["gtr"]["src"].index(s)
-            new_gtr_src.append(s)
-            new_gtr_tgt.append(books[book]["gtr"]["tgt"][idx])
+        if s in books[book]["nmt"]["src"]:
+            idx = books[book]["nmt"]["src"].index(s)
+            new_nmt_src.append(s)
+            new_nmt_tgt.append(books[book]["nmt"]["tgt"][idx])
         else:
-            new_gtr_src.append(s)
-            new_gtr_tgt.append("")
+            new_nmt_src.append(s)
+            new_nmt_tgt.append("")
 
-    books[book]["gtr"]["src"] = new_gtr_src
-    books[book]["gtr"]["tgt"] = new_gtr_tgt
+    books[book]["nmt"]["src"] = new_nmt_src
+    books[book]["nmt"]["tgt"] = new_nmt_tgt
 
 def create_csv_files():
     for book in books.keys():
@@ -112,8 +112,8 @@ def create_csv_files():
         source_filename = book + ".sent.gpt3.csv"
         write_to_file(source_filename, books[book]["gpt_sent"])
 
-        source_filename = book + ".sent.gtr.csv"
-        write_to_file(source_filename, books[book]["gtr"])
+        source_filename = book + ".sent.nmt.csv"
+        write_to_file(source_filename, books[book]["nmt"])
 
 create_csv_files()
         
