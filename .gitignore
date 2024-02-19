@@ -6,6 +6,7 @@ news_merged/
 news_to_merge/
 one2one_only/
 viz/
+translation/config.py
 
 # Compiled source #
 ###################

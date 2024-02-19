@@ -20,7 +20,7 @@ def write_to_file(filename, paragraphs):
         count = 0
         for s, t in zip(paragraphs["src"], paragraphs["tgt"]):
             count += 1
-            writer.writerow([count, s.replace("\n", ""), t.replace("\n", "")])
+            writer.writerow([count, s.replace("\n", " "), t.replace("\n", " ")])
 
 with open('all_annotations_v1.json', 'r', encoding='utf-8') as file:
     json_data = json.load(file)
@@ -30,9 +30,10 @@ books = {}
 # initiate a list of user choices (preferences of the translations)
 choices = []
 
+source_paras = []
 
 for entry in json_data:
-    if entry["eval"][-1] == "3":
+    if entry["eval"][-1] == "2":
         continue
     b = entry['book']
     src = entry['source_lang']
@@ -54,39 +55,46 @@ for entry in json_data:
         rejectLabel = entry["text1_tag"]
         rejectText = entry["text1"]
 
-    choices2list = [entry["eval"], entry["source"].replace("\n", ""), choiceLabel, choiceText.replace("\n", ""), rejectLabel, rejectText.replace("\n", ""), entry['difficult_choice'], entry['comment']]
+    choices2list = [entry["eval"], entry["source"].replace("\n", " "), choiceLabel, choiceText.replace("\n", " "), rejectLabel, rejectText.replace("\n", " "), entry['difficult_choice'], entry['comment']]
     choices.append(choices2list)
     
     if entry['text1'] not in books[book]["gpt_sent"]["tgt"] and entry['text1_tag'] == "sent":
         books[book]["gpt_sent"]["tgt"].append(entry['text1'])
         books[book]["gpt_sent"]["src"].append(entry['source'])
-        books[book]["human"]["tgt"].append(entry['target'])
-        books[book]["human"]["src"].append(entry['source'])
-        
-    if entry['text1'] not in books[book]["gpt_para"]["tgt"] and entry['text1_tag'] == "para":
-        books[book]["gpt_para"]["tgt"].append(entry['text1'])
-        books[book]["gpt_para"]["src"].append(entry['source'])
-        books[book]["human"]["tgt"].append(entry['target'])
-        books[book]["human"]["src"].append(entry['source'])
-
-    if entry['text1'] not in books[book]["gtr"]["tgt"] and entry['text1_tag'] == "gtr":
-        books[book]["gtr"]["tgt"].append(entry['text1'])
-        books[book]["gtr"]["src"].append(entry['source'])
-        books[book]["human"]["tgt"].append(entry['target'])
-        books[book]["human"]["src"].append(entry['source'])
+        if entry['target'] not in books[book]["human"]["tgt"]:
+            books[book]["human"]["tgt"].append(entry['target'])
+            books[book]["human"]["src"].append(entry['source'])
+            source_paras.append(entry['source'])
 
     if entry['text2'] not in books[book]["gpt_sent"]["tgt"] and entry['text2_tag'] == "sent":
         books[book]["gpt_sent"]["tgt"].append(entry['text2'])
         books[book]["gpt_sent"]["src"].append(entry['source'])
-
+        
+    if entry['text1'] not in books[book]["gpt_para"]["tgt"] and entry['text1_tag'] == "para":
+        books[book]["gpt_para"]["tgt"].append(entry['text1'])
+        books[book]["gpt_para"]["src"].append(entry['source'])
+        if entry['target'] not in books[book]["human"]["tgt"]:
+            books[book]["human"]["tgt"].append(entry['target'])
+            books[book]["human"]["src"].append(entry['source'])
+            source_paras.append(entry['source'])
 
     if entry['text2'] not in books[book]["gpt_para"]["tgt"] and entry['text2_tag'] == "para":
         books[book]["gpt_para"]["tgt"].append(entry['text2'])
         books[book]["gpt_para"]["src"].append(entry['source'])
 
-    if entry['text2'] not in books[book]["gtr"]["tgt"] and entry['text2_tag'] == "gtr":
-        books[book]["gtr"]["tgt"].append(entry['text2'])
-        books[book]["gtr"]["src"].append(entry['source'])
+    for i, p in enumerate(source_paras):
+        if entry['text1'] not in books[book]["gtr"]["tgt"] and entry['text1_tag'] == "gtr" and p == entry["source"]:
+            books[book]["gtr"]["tgt"].append(entry['text1'])
+            books[book]["gtr"]["src"].append(entry['source'])
+        # if entry['target'] not in books[book]["human"]["tgt"]:
+        #     books[book]["human"]["tgt"].append(entry['target'])
+        #     books[book]["human"]["src"].append(entry['source'])
+
+        elif entry['text2'] not in books[book]["gtr"]["tgt"] and entry['text2_tag'] == "gtr" and p == entry["source"]:
+            books[book]["gtr"]["tgt"].append(entry['text2'])
+            books[book]["gtr"]["src"].append(entry['source'])
+
+
 
 def create_csv_files():
     for book in books.keys():

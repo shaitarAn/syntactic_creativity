@@ -7,10 +7,10 @@ import sys
 import csv
 import argparse
 from lang_dict import lang_dict
+from config import *
 
-
-openai.organization = "org-HjWBseLU0iDzg4cx01nO6JrY"
-openai.api_key = "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"
+openai.organization = ORGANIZATION
+openai.api_key = OPENAI_API_KEY
 
 parser = argparse.ArgumentParser(description='Translate a file from a given source language to a target language with an OpenAI model.')
 parser.add_argument('-f', '--infile', required=True, help='the file to be translated')

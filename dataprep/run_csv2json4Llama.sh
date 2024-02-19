@@ -13,7 +13,7 @@ for input_file in "$DATADIR"/*human.csv; do
     filename=$(basename "$input_file")
     # echo "$filename"
     # change the extension of the filename to remove "human.csv" and replace it with "json"
-    output_file="${filename/human.csv/json}"
+    output_file="${filename/human.csv/source.json}"
 
     # create the output file path
     output_file="$OUTDIR/$output_file"

@@ -1,13 +1,14 @@
 import re
 
 def normalize_punct(line):
-    line = line.replace("’", "'")
-    line = line.replace("«", '"')
-    line = line.replace("»", '"')
+    line = line.replace("’", "' ")
+    line = line.replace("«", '" ')
+    line = line.replace("»", ' "')
+    line = line.replcae("\u00bb", ' "')
     line = line.replace("„", '"')
-    line = line.replace("“", '"')
-    line = line.replace("”", '"')
-    line = line.replace("‘","'")
+    line = line.replace("“", ' "')
+    line = line.replace("”", '" ')
+    line = line.replace("‘"," '")
     line = line.replace("…", "...")
     line = line.replace("......", "...")
     line = line.replace(". . .", "...")
