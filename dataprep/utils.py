@@ -1,31 +1,48 @@
 import re
 
 def normalize_punct(line):
+    line = line.replace(" ’", "")
     line = line.replace("’", "'")
-    line = line.replace("«", '" ')
-    line = line.replace("»", ' "')
-    # line = line.replace("\u00bb", ' "')
+    line = line.replace("?'", "?")
+    line = line.replace("!'", "!")
+    line = line.replace(".'", ".")
+    line = line.replace(",'", ",")
+    line = line.replace(":'", ":")
+    line = line.replace("—'", ". ")
     line = line.replace("„", '"')
-    line = line.replace("“", ' "')
-    line = line.replace("”", '" ')
-    line = line.replace("‘","'")
-    line = line.replace("…", "...")
-    line = line.replace("......", "...")
-    line = line.replace(". . .", "...")
+    line = line.replace("“", '"')
+    line = line.replace("”", '"') 
+    line = line.replace("‘","")
+    line = line.replace("……", "。")
+    line = line.replace("…", ".")
+    line = line.replace("......", ".")
+    line = line.replace(" . . .", ".")
     line = line.replace("– ", "")
     line = line.replace("— ", "")
     line = line.replace("- ", "")
     line = line.replace("— ", "")
-    # line =line.replace("—", "")
+    line = line.replace(" ?", "?")
+    line =line.replace(" !", "!")
 
     return line
 
-def replace_full_stop_char(text):
+def normalize_german_punct(line):
+    line = line.replace("«", '"')
+    line = line.replace("»", '"')
+    line = line.replace('?" ', '"? ')
+    line = line.replace('." ', '". ')
+    line = line.replace('!" ', '"! ')
+
+    return line
+
+def normalize_japanese_punct(text):
     text = text.replace("．", "。")
     text = text.replace(".", "。")
-    text = text.replace("！", "!")
-    text = text.replace("？", "?")
+    # text = text.replace("！", "!")
+    # text = text.replace("？", "?")
     text = text.replace("。", "。")
+    # text = text.replace("」", " ")
+    # text = text.replace("「", " ")
     return text
 
 def capitalize_after_period_space(text):
