@@ -1,4 +1,5 @@
 import re
+import string
 
 def normalize_punct(line):
     line = line.replace(" ’", "")
@@ -53,6 +54,14 @@ def capitalize_after_period_space(text):
     pattern = r'(\w\. )([a-z])'
     return re.sub(pattern, repl_func, text)
 
+def is_only_punctuation(text):
+    additional_punctuation = "」。"  # Add the characters you want to include here
+    if all(char in string.punctuation or char in additional_punctuation for char in text.strip()):
+        return True
+    
+def has_digit(text):
+    if text.strip().replace(".", "").isdigit() or text.strip().replace(")", "").isdigit():
+        return True
 
 def remove_html_chars(text):
     text = text.replace("<", "")

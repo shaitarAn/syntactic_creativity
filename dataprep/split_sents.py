@@ -13,7 +13,7 @@ wtp = WtP("wtp-bert-mini")
 wtp.half().to("cuda:0")
 
 
-inputdir = "source_para_json"
+inputdir = "all_csv"
 outputdir = "source_sent_json"
 outputdir2 = "source_sent_txt"
 
@@ -23,22 +23,24 @@ if not os.path.exists(outputdir):
 if not os.path.exists(outputdir2):
     os.makedirs(outputdir2)
 
-
-def is_only_punctuation(text):
-    additional_punctuation = "」。"  # Add the characters you want to include here
-    if all(char in string.punctuation or char in additional_punctuation for char in text.strip()):
-        return True
-    
-def has_digit(text):
-    if text.strip().replace(".", "").isdigit() or text.strip().replace(")", "").isdigit():
-        return True
-
 # Define a variable to store the buffer
 punctuation_buffer = ""
 
+def preprocess_text(source_text, lang):
+    if lang == "ja":
+        source_text = normalize_japanese_punct(source_text)
+    elif lang == "de":
+        source_text = normalize_german_punct(source_text)
+
+    else:               
+        source_text = normalize_punct(source_text)
+    source_text = capitalize_after_period_space(source_text)
+
+    return source_text
+
 # iterate through the data directory
 for file in os.listdir(inputdir):
-    if file.endswith("json"):
+    if file.endswith("human.csv"):
         file = os.path.join(inputdir, file)
         filename = os.path.basename(file)
         print(filename)
@@ -52,28 +54,25 @@ for file in os.listdir(inputdir):
         print(lang)
 
         outputfilename = os.path.join(outputdir, filename)
-        outputfilename = outputfilename.replace("para", "sent")
+        outputfilename = outputfilename.replace("para", "sent").replace("csv", "json").replace("human", "source")
         textfile = os.path.join(outputdir2, filename)
-        txtf = textfile.replace("json", "txt")
+        txtf = textfile.replace("csv", "txt").replace("human", "source")
 
 
         with open(file, "r") as inf, open(outputfilename, "w") as outf, open(txtf, "w") as outft:
-            for line in inf:
-                source_text = json.loads(line)["source"]
-                if lang == "ja":
-                    source_text = normalize_japanese_punct(source_text)
-                elif lang == "de":
-                    source_text = normalize_german_punct(source_text)
+            reader = csv.reader(inf)
+            next(reader)
+            for row in reader:
+                source_text = row[1]
+                source_text = preprocess_text(source_text, lang)   
 
-                else:               
-                    source_text = normalize_punct(source_text)
-                source_text = capitalize_after_period_space(source_text)
-                source_text = wtp.split(source_text, lang_code=lang, style="ud")
+                # split texts into sentences
+                source_sents = wtp.split(source_text, lang_code=lang, style="ud")
 
-                for sent in source_text:
+                for sent in source_sents:
                     sent = sent.replace("\n", " ")
                     sent = sent.lstrip()
-                    # print(sent)
+
                     if has_digit(sent):
                         # Append the punctuation-only line to the buffer
                         punctuation_buffer += sent.strip() + " "
@@ -96,5 +95,4 @@ for file in os.listdir(inputdir):
                 outf.write("\n")
                 outft.write(punctuation_buffer.strip() + "\n")
 
-# print(string.punctuation)
 
