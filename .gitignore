@@ -40,6 +40,8 @@ translation/config.py
 ######################
 .DS_Store
 .DS_Store?
+.RData
+.Rhistory
 ._*
 .Trashes
 __pycache__/
