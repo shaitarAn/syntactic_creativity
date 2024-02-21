@@ -8,7 +8,7 @@
 
 # 2. sentence-level from ../dataprep/source_sent_json
 # GPT-3 for de-en_news and en-de_news
-# GPT-4 for all except
+# GPT-4 for all
 
 level="para" # {para, sent}
 model="gpt-3.5-turbo-16k" # {gpt-4, gpt-3.5-turbo-16k}
