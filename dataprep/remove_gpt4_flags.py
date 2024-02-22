@@ -9,16 +9,16 @@ import re
 level = "sent"
 
 # input directory
-input_dir = f"llama_translations/llama_{level}_llama_fixed_news"
+input_dir = f"llama_translations/llama_{level}_llama_fixed"
 
 # output directory
-output_dir = f"final_csv/{level}s/llama"
+output_dir = f"translated/{level}-level"
 os.makedirs(output_dir, exist_ok=True)
 
-outputdir_txt = f"final_txt/{level}s/llama"
-os.makedirs(outputdir_txt, exist_ok=True)
+# outputdir_txt = f"final_txt/{level}s/llama"
+# os.makedirs(outputdir_txt, exist_ok=True)
 
-error_strings = ["WRONG STATEMENT, TRANSLATION FOUND", "INACCURATE TRANSLATION"]
+error_strings = ["WRONG STATEMENT, TRANSLATION FOUND", "INACCURATE TRANSLATION", "TRUE"]
 # <<INACCURATE TRANSLATION>>
 # <<WRONG STATEMENT, TRANSLATION FOUND. sometimes ending on : or >>
 
@@ -28,7 +28,7 @@ for file in os.listdir(input_dir):
     #  extract filename without extension
     filename = os.path.basename(file)
 
-    with open(file, 'r') as inf, open(output_dir + "/" + filename, 'w') as outf, open(outputdir_txt + "/" + ".".join(filename.split(".")[:-1]) + ".txt", 'w') as outf_txt:
+    with open(file, 'r') as inf, open(output_dir + "/" + filename, 'w') as outf:
         reader = csv.reader(inf, delimiter=',', quotechar='"')
         # skip header
         next(reader)
@@ -64,12 +64,10 @@ for file in os.listdir(input_dir):
                         translation = translation.replace("<<", "")
                         translation = translation.replace(">>", "")
                 writer.writerow([line_num, source, translation])
-                outf_txt.write(translation + "\n")
             else:
                 translation = re.sub(r"\n", " ", translation)
                 translation = translation.strip()
                 writer.writerow([line_num, source, translation])
-                outf_txt.write(translation + "\n")
 
 
 

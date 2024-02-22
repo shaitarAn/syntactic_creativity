@@ -35,7 +35,7 @@ with open(infile, "r") as inf, open(outfile, "w") as outf:
     for row in reader:
         source_text = row[1]
 
-        # source_text = preprocess_text(source_text, lang)
+        source_text = preprocess_text(source_text, lang)
 
         json.dump({"source": source_text}, outf)
         outf.write("\n")

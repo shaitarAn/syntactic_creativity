@@ -5,7 +5,7 @@ import json
 import argparse
 
 """
-This script is used to convert the json file to csv file
+Convert json files to csv files
 """
 
 parser = argparse.ArgumentParser(description='Convert a json file to a csv file.')
