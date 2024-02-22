@@ -1,8 +1,0 @@
-ORGANIZATION = "org-HjWBseLU0iDzg4cx01nO6JrY"
-OPENAI_API_KEY = "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"
-DEEPL_KEY = "69445007-671c-85e6-61a3-0095ee4eeb36"
-
-# Daniel's: 9a6fc970-247c-ea3a-60d0-029b20d818ad:fx
-# Institute's: 69445007-671c-85e6-61a3-0095ee4eeb36
-# Mine: 26a5dce0-e069-d906-abc4-9c9f9e5af3e7:fx
-# Lukas: b72e2fd3-baca-95b3-6c80-cc37b53087ef
