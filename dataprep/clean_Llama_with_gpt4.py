@@ -6,7 +6,7 @@ import re
 import sys
 import csv
 from lang_dict import lang_dict
-from config import * 
+from keys import * 
 
 level = "sent"
 

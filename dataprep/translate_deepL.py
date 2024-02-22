@@ -3,7 +3,7 @@ import requests
 import sys
 import json
 import os
-from config import DEEPL_KEY
+from keys import DEEPL_KEY
 
 parser = argparse.ArgumentParser(description='Translate text using DeepL')
 parser.add_argument('-f', '--inputfile', help='input file')

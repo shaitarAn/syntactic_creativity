@@ -7,7 +7,7 @@ import sys
 import csv
 import argparse
 from lang_dict import lang_dict
-from config import *
+from keys import *
 
 openai.organization = ORGANIZATION
 openai.api_key = OPENAI_API_KEY
