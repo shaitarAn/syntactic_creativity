@@ -6,7 +6,6 @@ news_merged/
 news_to_merge/
 one2one_only/
 viz/
-dataprep/config.py
 dataprep/keys.py
 
 # Compiled source #
