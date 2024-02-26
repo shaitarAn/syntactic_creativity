@@ -3,7 +3,7 @@ import os
 import csv
 
 """ 
-Parse a json file with annotations and create text files for each book. 
+Parse a json file with annotations and create csv files for each book. 
 Extract human preferences into a csv file.
 Data is from https://github.com/marzenakrp/LiteraryTranslation
 """
