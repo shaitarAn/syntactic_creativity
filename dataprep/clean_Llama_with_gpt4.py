@@ -9,6 +9,7 @@ from lang_dict import lang_dict
 from keys import * 
 
 level = "sent"
+startline = 1
 
 openai.organization = ORGANIZATION
 openai.api_key = OPENAI_API_KEY
@@ -46,15 +47,23 @@ for file in os.listdir(f"llama_translations/llama_{level}_csv"):
     source_lang = lang_dict[source_lang]
     target_lang = lang_dict[target_lang]
 
-    with open(file, 'r') as inf, open(output_dir + "/" + filename, 'w') as outf, open(meta_data_dir + "/" + filename + ".jsonl", 'w') as meta_outf:
+    # Determine the mode based on the line number
+    mode = 'w' if startline == 1 else 'a'
+
+    with open(file, 'r') as inf, open(output_dir + "/" + filename, mode) as outf, open(meta_data_dir + "/" + filename + ".jsonl", mode) as meta_outf:
         reader = csv.reader(inf, delimiter=',', quotechar='"')
         # skip header
         next(reader)
 
         writer = csv.writer(outf, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow(["id", "source", "translation"])
+
+        # Write header only if starting from line 1
+        if mode == 'w':
+            writer.writerow(["id", "source", "translation"])
 
         for row in reader:
+            if int(row[0]) < startline:
+                continue
             line_num = row[0]
             source = row[1]
             translation = row[2]
@@ -136,4 +145,6 @@ for file in os.listdir(f"llama_translations/llama_{level}_csv"):
             else:
                 print(response.json())
                 writer.writerow([line_num, source, "<ERROR>"])
+
+    startline = 1
 
