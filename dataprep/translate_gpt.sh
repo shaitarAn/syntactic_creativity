@@ -27,7 +27,7 @@ mkdir -p $OUTDIR
 # model: {gpt-4, gpt-3.5-turbo-16k}
 
 # iterate throught the files in the directory
-for file in ../dataprep/source_${level}_json/*.json; do
+for file in ../inputs/source_${level}_json/*.json; do
     # if "news" is not in the file, do
     if [[ $file == *"_news"* ]]; then
         

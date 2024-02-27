@@ -6,9 +6,9 @@ for level in "para" "sent"; do
     # Calculate "n2m", "n2mR", "length_var", "merges", "splits"
     # create csv results table per level
 
-    mkdir -p output/aligned_sentences_${level}
+    mkdir -p ../output/aligned_sentences_${level}
 
-    find "output/aligned_sentences_${level}/" -type f -name "*.csv" -exec rm -f {} \;
+    find "../output/aligned_sentences_${level}/" -type f -name "*.csv" -exec rm -f {} \;
 
     cd bertalign
 

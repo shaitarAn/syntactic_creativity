@@ -21,7 +21,7 @@ Removes new lines within text chunks.
 
 Iterates through  all_csv/{lang}.para.human.csv and extracts source paragraphs into json files formatted for Llama. 
 
-**split_sents.py** needs GPU
+**split_source_sents.py** needs GPU
 
 Iterates through all_csv/{lang}.para.human.csv files, preprocesses source texts and standardizes punctuation based on lang prior to segmentation. Splits source texts into sentences. Writes json files formatted for Llama, writes txt files. 
 
@@ -29,7 +29,7 @@ Iterates through all_csv/{lang}.para.human.csv files, preprocesses source texts 
 
 **translate_gpt.sh** -> translate_with_openAI.py
 
-Iterates through /dataprep/source_${level}_json/*.json. Uses OpenAI API to produce translations with GPT-3 and GPT-4. Saves files to translated/${level}-level. Script needs to be manually adjusted depending on level and model. Read annotation.
+Iterates through /inputs/source_${level}_json/*.json. Uses OpenAI API to produce translations with GPT-3 and GPT-4. Saves files to translated/${level}-level. Script needs to be manually adjusted depending on level and model. Read annotation.
 
 ### Translating with Llama 
 

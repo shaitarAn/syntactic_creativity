@@ -2,7 +2,7 @@
 
 
 DATADIR="all_csv"
-OUTDIR="source_para_json"
+OUTDIR="../inputs/source_para_json"
 
 mkdir -p "$OUTDIR"
 

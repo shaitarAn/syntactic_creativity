@@ -9,7 +9,7 @@ import csv
 from nltk import Alignment
 import argparse
 import numpy as np
-from utils import normalize_punct
+# from utils import normalize_punct
 from transformers import AutoModel, AutoTokenizer
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '2'
@@ -35,7 +35,11 @@ level = args.level
 languages = set()
 
 # input_dir = f'data/{level}s_cleaned'
-input_dir = f"../output/aligned_paras_{level}"
+input_dir = f"../inputs/{level}s"
+
+# Check if the directory exists, if not, create it
+if not os.path.exists("../output/alignments_per_file"):
+    os.makedirs("../output/alignments_per_file")
 
 for file in os.listdir(input_dir):
   filename_parts = file.split(".")
@@ -121,7 +125,7 @@ for file in os.listdir(input_dir):
     all_alignments = 0
     cross_alignments = 0
 
-    with open(file, "r") as inf, open(f"../output/alignments_per_file/{lang}.{system}.{level}alignments.csv", "w") as outf:
+    with open(file, "r") as inf, open(f"../output/alignments_per_file/{lang}.{level}.{system}.alignments.csv", "w") as outf:
         writer = csv.writer(outf, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         writer.writerow(["id", "source", "translation", "alignments"])
 
@@ -131,10 +135,8 @@ for file in os.listdir(input_dir):
         
         for row in reader:
             try:
-                paragraph1 = normalize_punct(row[1])
-                paragraph2 = normalize_punct(row[2])
                 
-                alignment, cross_pairs = extract_alignments(paragraph1, paragraph2)
+                alignment, cross_pairs = extract_alignments(row[1], row[2])
                 writer.writerow([row[0], row[1], row[2], alignment])
 
                 xwr_list.append(len(cross_pairs)/len(alignment)) 
@@ -157,7 +159,9 @@ for file in os.listdir(input_dir):
     except ZeroDivisionError:
         continue
 
+
 output_file = f"../results/{level}_alignment_scores.csv"
+
 
 with open(output_file, "w", newline='') as csvfile:
     writer = csv.writer(csvfile)

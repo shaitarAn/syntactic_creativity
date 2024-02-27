@@ -29,7 +29,7 @@ for langs in $langslist; do
     # iterate through the systems
     for system in $systems; do
 
-        parasrc="source_para_json/${langs}.para.source.json"
+        parasrc="../inputs/source_para_json/${langs}.para.source.json"
         sentfile="${inputdir}/${langs}.sent.${system}.csv"
 
         # Attempt to access the files
