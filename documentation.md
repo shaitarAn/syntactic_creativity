@@ -9,11 +9,13 @@
 **json2csv_littrans.py**
 
 Parses a json file with annotations and creates csv files for each book (language pair): para (gpt3, human) and sent formatted as para (gpt3, nmt).
-Extracts human preferences into a csv file output/littrans_annotators_choices.csv 
+Extracts human preferences into a csv file output/littrans_annotators_choices.csv
+Removes new lines within text chunks.
 
 **txt2csv_wmt23.py**
 
 Converts the WMT23 txt files to csv files, merging the source and target languages into one file. Para (human, gpt4), sent (nmt).
+Removes new lines within text chunks.
 
 **run_csv2json4Llama.sh** -> csv2json4Llama.py
 

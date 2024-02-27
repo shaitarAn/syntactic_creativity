@@ -21,6 +21,9 @@ args = parser.parse_args()
 parasrc = args.parasrc
 sentfile = args.sentfile
 
+# Define the pattern for matching (PERSON#)
+person_pattern = re.compile(r'\(PERSON\d\d*\)')
+
 def read_file(file):
     with open(file, 'r') as f:
         return f.readlines()
@@ -40,74 +43,64 @@ def read_csv(sentfile):
 def write_to_file(filename, texts):
     with open(filename, 'w') as file:
         writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow(["id", "source", "target"])
+        writer.writerow(["id", "source", "translation"])
         counter = 0
         for para, merge in texts:
-            para = json.loads(para)["source"].strip()
+            if para.strip() == "" or merge.strip() == "":
+                continue
+            merge = re.sub(r'\s+', ' ', merge)
+            para = re.sub(r'\s+', ' ', para)
+            para = re.sub(r"\.\.", ".", para)
+            para = re.sub(r"\.\.+", "...", para)
             counter += 1
             writer.writerow([counter, para, merge])
 
-            
-
-def clean_text(text):
-    text = text.replace("Sorry, but I am unable to translate an unintelligible text. If you provide a clear text in English, I will be happy to help you with the translation into German.", "<unintelligible>") # 4 occurences in de-en gpt3
-    text = text.replace("Translate the following text into de. Output only the translation itself without additional commentary or explanations. Text: ", "") # 68 occurences in en-de_news.gpt3!
-    text = text.replace("Translate the following text into de. Output only the translation itself without additional commentary or explanations.  Text: ", "")
-    text = text.replace("Could you please provide the text you want me to translate?", "") # 1 time in en-de gpt4
-    text = text.replace("As a translator, I need the text to be translated. Currently, the text """, "")
-    text = text.replace('"" is not providing any content to be translated to German. Please provide the necessary details.', "") # 8 occurences de-en gpt4 for sentences like (PERSON#)
-    text = text.replace("You need to provide a text for translation.", "(PERSON1)")
-    text = text.replace("Could you please provide the text you want me to translate?", "1)")
-    text = text.replace("The target text includes a German translation of the source text. The German translation is: ", "")
-    text = text.replace("The German translation of the source text is:", "")
-    text = text.replace("The text translates to: ", "")
-    text = text.replace("The text you provided (""1"") does not need to be translated as it is a numeral, which stays the same in both German (de) and English (en).", "1")
-    text = text.replace("\n", "")
-    
-    return text
-
-
-# Define the pattern for matching (PERSON#)
-person_pattern = re.compile(r'^\(PERSON\d+\)$')
-
 def align_sents_and_parasrc(parasrc, sentfile):
     parasrc = read_file(parasrc)
-    senssrc, senttgt = read_csv(sentfile)
+    sentsrc, senttgt = read_csv(sentfile)
 
     grouped_sens = []
+    paragraphs = []
 
     for para in parasrc:
         # read json data
         para = json.loads(para)["source"].strip()
-
-        print("para: ", para)
+        # para = remove_html_chars(para)
+        para_no_persons = re.sub(person_pattern, '', para)
 
         para_sens = []  # Use a list to store sentences for each paragraph
-        sent_gen = zip(senssrc, senttgt)  # Create a generator for zipped sentences
-        # print(para)
+        sent_gen = zip(sentsrc, senttgt)  # Create a generator for zipped sentences
+        print()
+        print("-------------------")
+        print("para: ", para)
+        print()
         for s, t in sent_gen:
-            s = clean_text(s)
-            t = clean_text(t)
-            if s.strip() in para:
-                # print("+++", s,t)
-                if person_pattern.match(s.strip()):  # Check if s matches (PERSON#)
-                    t = s  
-                if t == """Ich bin ein Machine-Translation-System, das Sätze von Englisch nach Deutsch übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare.""":
-                    t = s
-                # Set t to be equal to s
-                # t = clean_text(t)
+            s = remove_mt_artifacts(s)
+            # s = remove_html_chars(s)
+
+            if len(s.split( )) == 1 or t.strip() in ['"Ich bin ein Maschinenübersetzungssystem, das Sätze aus dem Englischen ins Deutsche übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."', '"Ich bin ein Machine-Translation-System, das Sätze von Englisch nach Deutsch übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."', '"Ich bin ein maschinelles Übersetzungssystem, das Sätze aus dem Englischen ins Deutsche übersetzt."', '"Ich bin ein maschinelles Übersetzungssystem, das Sätze von Englisch nach Deutsch übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."']:
+                para_no_persons = para_no_persons.replace(s, "")
+
+            elif s.strip() in para:
+                print(s)
+                t = remove_mt_artifacts(t)
+                # t = remove_html_chars(t)
+                t = re.sub(person_pattern, '', t)
+                t = re.sub(r"\.\.", ".", t)
+                t = re.sub(r"\.\.+", "...", t)
+
                 para_sens.append(t.strip())  # Add sentence to list
-                # print("para: ", para)
-                # print(s)
-                # print("*")
+                
+
                 # Remove the matched sentence from senssrc
                 para = para.replace(s.strip(), '', 1)
 
+        paragraphs.append(para_no_persons)
         para_sens = " ".join(para_sens)
         grouped_sens.append(para_sens)
         # print("-------------------------------")
 
-    return zip(parasrc, grouped_sens)
+    return zip(paragraphs, grouped_sens)
 
 
 grouped_sens = align_sents_and_parasrc(parasrc, sentfile)

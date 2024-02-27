@@ -64,13 +64,18 @@ def has_digit(text):
         return True
 
 def remove_html_chars(text):
-    text = text.replace("<", "")
-    text = text.replace("/>", "")
+    # text = text.replace("<unintelligible/>", "(unintelligible)")
+    # text = text.replace("<parallel_talk>", "(parallel_talk)")
+    # text = text.replace("</parallel_talk>", "(parallel_talk)")
+    text = text.replace("<unintelligible/>", "")
+    text = text.replace("<parallel_talk>", "")
+    text = text.replace("</parallel_talk>", "")
+    text = text.replace("<laugh/>", "")
+    text = text.replace("*lacht*", "")
     return text
 
-
-def clean_text(text):
-    text = text.replace("Sorry, but I am unable to translate an unintelligible text. If you provide a clear text in English, I will be happy to help you with the translation into German.", "<unintelligible>") # 4 occurences in de-en gpt3
+def remove_mt_artifacts(text):
+    text = text.replace("Sorry, but I am unable to translate an unintelligible text. If you provide a clear text in English, I will be happy to help you with the translation into German.", "(unintelligible)") # 4 occurences in de-en gpt3
     text = text.replace("Translate the following text into de. Output only the translation itself without additional commentary or explanations. Text: ", "") # 68 occurences in en-de_news.gpt3!
     text = text.replace("Translate the following text into de. Output only the translation itself without additional commentary or explanations.  Text: ", "")
     text = text.replace("Could you please provide the text you want me to translate?", "") # 1 time in en-de gpt4
@@ -81,10 +86,10 @@ def clean_text(text):
     text = text.replace("The target text includes a German translation of the source text. The German translation is: ", "")
     text = text.replace("The German translation of the source text is:", "")
     text = text.replace("The text translates to: ", "")
-    text = text.replace('The text you provided ("1") does not need to be translated as it is a numeral, which stays the same in both German (de) and English (en).', "1")
+    text = text.replace("The text you provided (""1"") does not need to be translated as it is a numeral, which stays the same in both German (de) and English (en).", "1")
     text = text.replace("\n", "")
-    text = text.replace("1. 1. 1 1.", "")
-    text = text.replace(" 1. 1. 1. 1.","")
+    text = text.replace("The English translation is: ", "")
+    text = text.replace('"Okay" kann auf Deutsch als "in Ordnung" oder "okay" übersetzt werden.', "Okay")
     
     return text
 

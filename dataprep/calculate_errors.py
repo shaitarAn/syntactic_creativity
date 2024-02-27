@@ -10,16 +10,16 @@ This srcipt itarates through all the files in the para and sent directories and 
 import os
 import csv
 
-level = "para"
+level = "sent"
 
 types = ["llama_fixed", "gpt4_cleaned"]
 errors = ["CORRECT STATEMENT, NO TRANSLATION FOUND", "WRONG STATEMENT, TRANSLATION FOUND", "INACCURATE TRANSLATION"]
 
 for type in types:
     try:
-        src_dir = f"data/llama_translations/llama_{level}_{type}/"
-        outputfile_csv = f"data/llama_{level}_{type}_errors.csv"
-        outputfile_tex = f"data/llama_{level}_{type}_errors.tex"
+        src_dir = f"llama_translations/llama_{level}_{type}/"
+        outputfile_csv = f"output/llama_{level}_{type}_errors.csv"
+        outputfile_tex = f"output/llama_{level}_{type}_errors.tex"
 
         # Create a dictionary to store errors for each language pair
         lang_errors = {}

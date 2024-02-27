@@ -22,7 +22,7 @@ done
 # Remove duplicates from langslist
 langslist=$(echo "$langslist" | tr ' ' '\n' | sort -u | tr '\n' ' ')
 
-systems="gpt4 gpt3"
+systems="llama gpt4 gpt3"
 
 for langs in $langslist; do
 
@@ -32,9 +32,17 @@ for langs in $langslist; do
         parasrc="source_para_json/${langs}.para.source.json"
         sentfile="${inputdir}/${langs}.sent.${system}.csv"
 
-        # merge the sentences
-        python merge_sents2paras.py -ps $parasrc -sf $sentfile
+        # Attempt to access the files
+        # If a file is not found, catch the error and print a message
+        # The loop will continue with the next iteration even if a file is not found
+        if [ -e "$parasrc" ] && [ -e "$sentfile" ]; then
+            python merge_sents2paras.py -ps "$parasrc" -sf "$sentfile" || true
+        else
+            echo "Error: One or more files not found for $langs and system $system"
+        fi
 
     done
 
 done
+
+
