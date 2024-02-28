@@ -1,6 +1,4 @@
----
 # Dataprep
----
 
 ## Standardize data format. Retrieve source sentences.
 
@@ -71,9 +69,30 @@ cp translated/para-level/* ../inputs/paras/
 cp all_csv/\*para\* ../inputs/paras
 cp all_csv/\*sent\* ../inputs/sents
 
----
 # Analysis
----
+
+needs GPU
+
+cd analysis
+
+**bash run_analysis.sh** ->
+
+**python3 align_sents.py -l ${level}**
+
+writes csv files with aligned sentences to ../../output/aligned_sentences_{level} \
+writes results to ../../results/{level}_n2m_scores.csv
+with ["lang", "system", "total_src_sents", "n2m", "n2mR", "length_var", "merges", "splits", "mergesRatio", "splitsRatio"]
+
+**python3 calculate_xwr.py -l ${level}**
+
+Performs word alignment and calculates cross word ratio (XWR) \
+writes all alignment data to ./output/alignments_per_file/ \
+writes results to ../results/{level}_alignment_scores.csv
+with ["lang", "system", "all_alignments", "cross_alignments", "xwr_mean", "xwr_std"]
+
+**python3 merge_csv.py -l ${level}**
+
+Final dataframe: ../results/{level}_syntax_scores.csv
 
 
 

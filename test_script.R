@@ -2,8 +2,8 @@
 rm(list=ls())
 
 # Load the necessary library
-install.packages("data.table")
-install.packages("ggplot2")
+# install.packages("data.table")
+# install.packages("ggplot2")
 library(data.table)
 library(ggplot2)
 
@@ -126,13 +126,13 @@ num_pages <- ceiling(count / 10)
 
 # Iterate over each page
 for (page in 1:num_pages){
-  start_plot <- (page -1)*5 +1
+  start_plot <- (page -1)*10 +1
   end_plot <- min(start_plot + 9, num_plots)
 
   # Check if there are enough plots remaining to fill a complete page
   if (start_plot <= num_plots) {
     # Create a new page
-    if (page > 1) {
+    if (page > 2) {
       plot.new()
       plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
     }
