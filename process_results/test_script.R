@@ -193,9 +193,6 @@ combined_means <- rbind(paras_means, sents_means)
 
 combined_means <- combined_means[!(system == "human" & Level == "Sentence")]
 
-# rename the "llama" column with "llama2"
-combined_means[combined_means$system == "llama", "system"] <- "llama2"
-
 # Convert 'system' and 'Level' to factor for better plotting control
 combined_means$system <- factor(combined_means$system, levels = unique(combined_means$system))
 combined_means$Level <- factor(combined_means$Level, levels = c('Paragraph', 'Sentence'))
@@ -240,9 +237,6 @@ sents_means$Level <- "Sentence"
 combined_means <- rbind(paras_means, sents_means)
 
 combined_means <- combined_means[!(system == "human" & Level == "Sentence")]
-
-# rename the "llama" column with "llama2"
-combined_means[combined_means$system == "llama", "system"] <- "llama2"
 
 # Convert 'system' and 'Level' to factor for better plotting control
 combined_means$system <- factor(combined_means$system, levels = unique(combined_means$system))
@@ -295,9 +289,6 @@ combined_means <- rbind(paras_means, sents_means)
 
 combined_means <- combined_means[!(system == "human" & Level == "Sentence")]
 
-# rename the "llama" column with "llama2"
-combined_means[combined_means$system == "llama", "system"] <- "llama2"
-
 # Convert 'system' and 'Level' to factor for better plotting control
 combined_means$system <- factor(combined_means$system, levels = unique(combined_means$system))
 combined_means$Level <- factor(combined_means$Level, levels = c('Paragraph', 'Sentence'))
@@ -336,18 +327,18 @@ library(ggplot2)
 paras_table <- fread("../results/para_syntax_scores.csv")
 
 # Define your custom colors
-colors <- setNames(c("#56B4E9", "#666666", "#999999", "#333333"), c("human", "gpt3", "gpt4", "llama"))
+colors <- setNames(c("#56B4E9", "#666666", "#999999", "#333333"), c("human", "gpt3", "gpt4", "llama2"))
 
 # Ensure the 'system' column is a factor with levels in the correct order
 paras_table$system <- factor(paras_table$system, levels = names(colors))
 
 # Prepare the difference calculation and update 'lang' factor levels
 difference_table <- paras_table %>%
-  filter(system %in% c("human", "gpt3", "gpt4", "llama")) %>%
+  filter(system %in% c("human", "gpt3", "gpt4", "llama2")) %>%
   group_by(lang) %>%
   summarize(
     HumanXWR = xwr_mean[system == "human"][1], # Assuring exactly one human score is used
-    MaxLLMXWR = max(xwr_mean[system %in% c("gpt3", "gpt4", "llama")]), # Find max xwr among LLMs
+    MaxLLMXWR = max(xwr_mean[system %in% c("gpt3", "gpt4", "llama2")]), # Find max xwr among LLMs
     Difference = HumanXWR - MaxLLMXWR,
     .groups = 'drop' # Drop the grouping
   ) %>%
@@ -371,7 +362,7 @@ ggplot(paras_table, aes(x = xwr_mean, y = lang, fill = system)) +
   geom_text(aes(label = round(xwr_mean, 2), fill = system, color = system),  # Set label, fill, and color aesthetic
             position = position_stack(vjust = 0.5), size = 3, show.legend = FALSE) +  # Adjust position and size
   # Set color to white for llama and gpt3
-  scale_color_manual(values = c("gpt3" = "white", "llama" = "white", "gpt4" = "black", "human" = "black")) +
+  scale_color_manual(values = c("gpt3" = "white", "llama2" = "white", "gpt4" = "black", "human" = "black")) +
   
   # Adjust the theme
   theme_minimal() +
@@ -409,8 +400,8 @@ combined_means_LV <- rbind(paras_means_LV, sents_means_LV)
 
 combined_means_LV <- combined_means_LV[!(system == "human" & Level == "Sentence")]
 
-# rename the "llama" column with "llama2"
-combined_means_LV[combined_means_LV$system == "llama", "system"] <- "llama2"
+# rename the "llama2" column with "llama2"
+combined_means_LV[combined_means_LV$system == "llama2", "system"] <- "llama2"
 
 combined_means_LV
 
@@ -449,8 +440,8 @@ paras_means_LV_lang <- paras_table[, .(MeanLV = mean(length_var)), by = .(system
 # Add a column to the data frame to indicate the level
 paras_means_LV_lang$Level <- "Paragraph"
 
-# Rename the "llama" column with "llama2"
-paras_means_LV_lang$system[paras_means_LV_lang$system == "llama"] <- "llama2"
+# Rename the "llama2" column with "llama2"
+paras_means_LV_lang$system[paras_means_LV_lang$system == "llama2"] <- "llama2"
 
 # Define your custom colors
 colors <- c("human" = "#56B4E9", "gpt3" = "#666666", "gpt4" = "#999999", "llama2" = "#333333")
@@ -507,8 +498,8 @@ mean_adjusted_n2mR_per_system$Level <- 'Sentence'
 
 # Combine the two tables
 combined_means <- rbind(paras_means, mean_adjusted_n2mR_per_system)
-# rename the "llama" column with "llama2"
-combined_means[combined_means$system == "llama", "system"] <- "llama2"
+# rename the "llama2" column with "llama2"
+combined_means[combined_means$system == "llama2", "system"] <- "llama2"
 
 # Convert 'system' and 'Level' to factor for better plotting control
 combined_means$system <- factor(combined_means$system, levels = unique(combined_means$system))
@@ -559,18 +550,18 @@ ggplot(long_data, aes(x = lang, y = Value, fill = RatioType)) +
 # ############################################################
 
 # Define your custom colors
-colors <- setNames(c("#56B4E9", "#666666", "#999999", "#333333"), c("human", "gpt3", "gpt4", "llama"))
+colors <- setNames(c("#56B4E9", "#666666", "#999999", "#333333"), c("human", "gpt3", "gpt4", "llama2"))
 
 # Ensure the 'system' column is a factor with levels in the correct order
 paras_table$system <- factor(paras_table$system, levels = names(colors))
 
 # Prepare the difference calculation and update 'lang' factor levels
 difference_table <- paras_table %>%
-  filter(system %in% c("human", "gpt3", "gpt4", "llama")) %>%
+  filter(system %in% c("human", "gpt3", "gpt4", "llama2")) %>%
   group_by(lang) %>%
   summarize(
     Human_n2mR = n2mR[system == "human"][1], # Assuring exactly one human score is used
-    MaxLLM_n2mR = max(n2mR[system %in% c("gpt3", "gpt4", "llama")]), # Find max xwr_mean among LLMs
+    MaxLLM_n2mR = max(n2mR[system %in% c("gpt3", "gpt4", "llama2")]), # Find max xwr_mean among LLMs
     Difference = Human_n2mR - MaxLLM_n2mR,
     .groups = 'drop' # Drop the grouping
   ) %>%
@@ -599,18 +590,18 @@ ggplot(paras_table, aes(x = lang, y = n2mR, fill = system)) +
 # ############################################################
 
 # Define your custom colors
-colors <- setNames(c("#56B4E9", "#666666", "#999999", "#333333"), c("human", "gpt3", "gpt4", "llama"))
+colors <- setNames(c("#56B4E9", "#666666", "#999999", "#333333"), c("human", "gpt3", "gpt4", "llama2"))
 
 # Ensure the 'system' column is a factor with levels in the correct order
 paras_table$system <- factor(paras_table$system, levels = names(colors))
 
 # Prepare the difference calculation and update 'lang' factor levels
 difference_table <- paras_table %>%
-  filter(system %in% c("human", "gpt3", "gpt4", "llama")) %>%
+  filter(system %in% c("human", "gpt3", "gpt4", "llama2")) %>%
   group_by(lang) %>%
   summarize(
     Human_mergesRatio = mergesRatio[system == "human"][1], # Assuring exactly one human score is used
-    MaxLLM_mergesRatio = max(mergesRatio[system %in% c("gpt3", "gpt4", "llama")]), # Find max xwr_mean among LLMs
+    MaxLLM_mergesRatio = max(mergesRatio[system %in% c("gpt3", "gpt4", "llama2")]), # Find max xwr_mean among LLMs
     Difference = Human_mergesRatio - MaxLLM_mergesRatio,
     .groups = 'drop' # Drop the grouping
   ) %>%
@@ -640,18 +631,18 @@ ggplot(paras_table, aes(x = lang, y = mergesRatio, fill = system)) +
 # ############################################################
 
 # Define your custom colors
-colors <- setNames(c("#56B4E9", "#666666", "#999999", "#333333"), c("human", "gpt3", "gpt4", "llama"))
+colors <- setNames(c("#56B4E9", "#666666", "#999999", "#333333"), c("human", "gpt3", "gpt4", "llama2"))
 
 # Ensure the 'system' column is a factor with levels in the correct order
 paras_table$system <- factor(paras_table$system, levels = names(colors))
 
 # Prepare the difference calculation and update 'lang' factor levels
 difference_table <- paras_table %>%
-  filter(system %in% c("human", "gpt3", "gpt4", "llama")) %>%
+  filter(system %in% c("human", "gpt3", "gpt4", "llama2")) %>%
   group_by(lang) %>%
   summarize(
     Human_splitsRatio = splitsRatio[system == "human"][1], # Assuring exactly one human score is used
-    MaxLLM_splitsRatio = max(splitsRatio[system %in% c("gpt3", "gpt4", "llama")]), # Find max splitsRatio among LLMs
+    MaxLLM_splitsRatio = max(splitsRatio[system %in% c("gpt3", "gpt4", "llama2")]), # Find max splitsRatio among LLMs
     Difference = Human_splitsRatio - MaxLLM_splitsRatio,
     .groups = 'drop' # Drop the grouping
   ) %>%
@@ -720,7 +711,7 @@ comet_scores <- fread("comet_scores_para.csv")
 # The columns are lang,system,score. We want to plot the score for each system by lang with custom colors
 
 # Define your custom colors
-colors <- setNames(c("#56B4E9", "#666666", "#999999", "#333333"), c("human", "gpt3", "gpt4", "llama"))
+colors <- setNames(c("#56B4E9", "#666666", "#999999", "#333333"), c("human", "gpt3", "gpt4", "llama2"))
 
 # Ensure the 'system' column is a factor with levels in the correct order
 comet_scores$system <- factor(comet_scores$system, levels = names(colors))
@@ -749,7 +740,7 @@ comet_scores <- fread("comet_scores_sent.csv")
 # The columns are lang,system,score. We want to plot the score for each system by lang with custom colors
 
 # Define your custom colors
-colors <- setNames(c("#56B4E9", "#666666", "#999999", "#333333"), c("human", "gpt3", "gpt4", "llama"))
+colors <- setNames(c("#56B4E9", "#666666", "#999999", "#333333"), c("human", "gpt3", "gpt4", "llama2"))
 
 # Ensure the 'system' column is a factor with levels in the correct order
 comet_scores$system <- factor(comet_scores$system, levels = names(colors))
