@@ -21,6 +21,11 @@ args = parser.parse_args()
 parasrc = args.parasrc
 sentfile = args.sentfile
 
+if "_news" in sentfile:
+    langs = sentfile.split("_")[0]
+else:
+    langs = sentfile.split(".")[0]
+
 # Define the pattern for matching (PERSON#)
 person_pattern = re.compile(r'\(PERSON\d\d*\)')
 
@@ -64,8 +69,9 @@ def align_sents_and_parasrc(parasrc, sentfile):
 
     for para in parasrc:
         # read json data
+        lang = langs.split("-")[0]
         para = json.loads(para)["source"].strip()
-        # para = remove_html_chars(para)
+        para = preprocess_text(para, lang)
         para_no_persons = re.sub(person_pattern, '', para)
 
         para_sens = []  # Use a list to store sentences for each paragraph
@@ -75,10 +81,11 @@ def align_sents_and_parasrc(parasrc, sentfile):
         print("para: ", para)
         print()
         for s, t in sent_gen:
+            # print(s)
             s = remove_mt_artifacts(s)
             # s = remove_html_chars(s)
 
-            if len(s.split( )) == 1 or t.strip() in ['"Ich bin ein Maschinenübersetzungssystem, das Sätze aus dem Englischen ins Deutsche übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."', '"Ich bin ein Machine-Translation-System, das Sätze von Englisch nach Deutsch übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."', '"Ich bin ein maschinelles Übersetzungssystem, das Sätze aus dem Englischen ins Deutsche übersetzt."', '"Ich bin ein maschinelles Übersetzungssystem, das Sätze von Englisch nach Deutsch übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."']:
+            if lang in ["de"] and len(s.split( )) == 1 or t.strip() in ['"Ich bin ein Maschinenübersetzungssystem, das Sätze aus dem Englischen ins Deutsche übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."', '"Ich bin ein Machine-Translation-System, das Sätze von Englisch nach Deutsch übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."', '"Ich bin ein maschinelles Übersetzungssystem, das Sätze aus dem Englischen ins Deutsche übersetzt."', '"Ich bin ein maschinelles Übersetzungssystem, das Sätze von Englisch nach Deutsch übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."']:
                 para_no_persons = para_no_persons.replace(s, "")
 
             elif s.strip() in para:

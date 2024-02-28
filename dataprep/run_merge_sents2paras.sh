@@ -32,14 +32,7 @@ for langs in $langslist; do
         parasrc="../inputs/source_para_json/${langs}.para.source.json"
         sentfile="${inputdir}/${langs}.sent.${system}.csv"
 
-        # Attempt to access the files
-        # If a file is not found, catch the error and print a message
-        # The loop will continue with the next iteration even if a file is not found
-        if [ -e "$parasrc" ] && [ -e "$sentfile" ]; then
-            python merge_sents2paras.py -ps "$parasrc" -sf "$sentfile" || true
-        else
-            echo "Error: One or more files not found for $langs and system $system"
-        fi
+        python merge_sents2paras.py -ps "$parasrc" -sf "$sentfile"
 
     done
 
