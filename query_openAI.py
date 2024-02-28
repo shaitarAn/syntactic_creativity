@@ -8,62 +8,79 @@ openai.organization = ORGANIZATION
 openai.api_key = OPENAI_API_KEY
 
 task = """
-list_df <- split(combined_table, combined_table$lang)
+library(data.table)
+library(ggplot2)
 
-# Calculate the number of pages needed to fit all the plots
-num_plots <- length(list_df)
-num_pages <- ceiling(num_plots / 10)
+# Read the first CSV file into a data frame
+paras_table <- fread("results/para_syntax_scores.csv")
 
-# Open a PDF device to save the plots
-pdf("plots.pdf")
+# Read the second CSV file into a data frame
+sents_table <- fread("results/sent_syntax_scores.csv")
 
-# Iterate over each page
-for (page in 1:num_pages) {
-  start_plot <- (page - 1) * 10 + 1
-  end_plot <- min(start_plot + 9, num_plots)
+# ############################################################
+# # Plot the mean XWR scores by system for paragraphs and sentences
+# ############################################################
 
-  # Check if there are enough plots remaining to fill a complete page
-  if (start_plot <= num_plots) {
-    # Create a new page
-    if (page > 1) {
-      plot.new()
-      plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
-    }
+# Calculate xwr means for paragraphs and sentences
+paras_means <- paras_table[, .(MeanXWR = mean(xwr_mean)), by = system]
+sents_means <- sents_table[, .(MeanXWR = mean(xwr_mean)), by = system]
 
-    # Use lapply to iterate over the plots for the current page
-    plots <- lapply(list_df[start_plot:end_plot], function(df) {
-      if(nrow(df) >= 8){
-      p <- ggplot(df, aes(x = system, y = xwr_mean, fill = Level)) +
-        geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
-        geom_errorbar(aes(ymin = xwr_mean - xwr_std, ymax = xwr_mean + xwr_std),
-                      position = position_dodge(width = 0.7), width = 0.25) +
-        scale_fill_manual(
-          values = c("Paragraph" = "#333333", "Sentence" = "#999999")
-        ) +
-        theme_minimal() +
-        theme(axis.text.x = element_text(hjust = 0.5, size = 12),
-              axis.text.y = element_text(size = 10),
-              legend.position = "none") +
-        labs(title = paste(unique(df$lang)),
-             x = NULL,
-             y = NULL,
-             fill = NULL)
-      # Return the plot
-      return(p)
-      } else{
-        return(NULL)
-      }
-    })
-    plots <- Filter(Negate(is.null), plots)
-    # Arrange the plots in a grid layout and print them
-    gridExtra::grid.arrange(grobs = plots, ncol = 2)
-  }
-}
+# calculate the standard deviation for paragraphs and sentences
+paras_sd <- paras_table[, .(SD_XWR = sd(xwr_mean)), by = system]
+sents_sd <- sents_table[, .(SD_XWR = sd(xwr_mean)), by = system]
 
-# Close the PDF device
-dev.off()
+# Merge the means and standard deviations
+paras_data <- merge(paras_means, paras_sd, by = "system")
+sents_data <- merge(sents_means, sents_sd, by = "system")
 
-This creates 3 pages with the second page being empty. The first page contains 10 plots and the third page contains 10 plots. How can avoid creating an empty page?
+# Add a column to indicate the level
+paras_data$Level <- "Paragraph"
+sents_data$Level <- "Sentence"
+
+# Combine paragraphs and sentences table
+combined_data <- rbind(paras_data, sents_data)
+
+# Convert 'system' and 'Level' to factor for better plotting control
+combined_data$system <- factor(
+  combined_data$system, levels = unique(combined_data$system)
+)
+combined_data$Level  <- factor(
+  combined_data$Level ,levels = c("Paragraph", "Sentence")
+)
+
+combined_data <- combined_data[!(system == "human" & Level == "Sentence")]
+
+# View(combined_data)
+# summary(combined_data)
+
+# order the levels of 'system' with "human" first
+combined_data$system <- factor(
+  combined_data$system, levels = c("human", "gpt3", "gpt4", "llama2", "nmt")
+)
+
+# Now plot the combined table with error bars
+ggplot(combined_data, aes(x = system, y = MeanXWR, fill = Level)) +
+  geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
+  geom_errorbar(
+    aes(ymin = MeanXWR - SD_XWR, ymax = MeanXWR + SD_XWR),
+    position = position_dodge(width = 0.7), width = 0.25
+  ) +  # 95% CI
+  scale_fill_manual(
+    values = c("Paragraph" = "#333333", "Sentence" = "#999999")
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(hjust = 0.5, size = 25),
+        axis.text.y = element_text(size = 20),
+        legend.position = "right",
+        legend.box = "vertical",
+        legend.title = element_text(size = 20),
+        legend.text = element_text(size = 20)) +
+  labs(title = "Mean XWR and STD XWR Scores by System and Level",
+       x = NULL,
+       y = "Mean XWR",
+       fill = "Level")
+
+This plot is not being displayed. 
 
 """
 

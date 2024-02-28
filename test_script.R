@@ -46,8 +46,8 @@ combined_data$Level  <- factor(
 
 combined_data <- combined_data[!(system == "human" & Level == "Sentence")]
 
-View(combined_data)
-summary(combined_data)
+# View(combined_data)
+# summary(combined_data)
 
 # order the levels of 'system' with "human" first
 combined_data$system <- factor(
@@ -76,43 +76,7 @@ ggplot(combined_data, aes(x = system, y = MeanXWR, fill = Level)) +
        y = "Mean XWR",
        fill = "Level")
 
-# ggplot(combined_data, aes(x = system, y = MeanXWR, fill = Level)) +
-#   geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
-#   geom_errorbar(aes(ymin = MeanXWR - 1.96 * SD_XWR, ymax = MeanXWR + 1.96 * SD_XWR),
-#                 position = position_dodge(width = 0.7), width = 0.25) +  # 95% CI
-#   scale_fill_manual(values = c("Paragraph" = "#333333", "Sentence" = "#999999")) +
-#   theme_minimal() +
-#   theme(axis.text.x = element_text(hjust = 0.5, size = 25),
-#         axis.text.y = element_text(size = 20),   
-#         legend.position = "top",               
-#         legend.box = "horizontal",             
-#         legend.title = element_text(size = 20),  
-#         legend.text = element_text(size = 20)) +  
-#   labs(title = "Mean XWR and STD XWR Scores by System and Level",
-#        x = NULL,
-#        y = "Mean XWR",
-#        fill = "Level")
 
-# ggplot(combined_means, aes(x = system, y = MeanXWR, fill = Level)) +
-#   geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
-#   scale_fill_manual(
-#     values = c("Paragraph" = "#333333", "Sentence" = "#999999")
-#   ) +
-#   theme_minimal() +
-#   theme(axis.text.x = element_text(hjust = 0.5,size = 25),
-#         axis.text.y = element_text(size = 20),   # Larger y-axis labels
-#         legend.position = "top",               # Move legend to top
-#         legend.box = "horizontal",             # Horizontal Legend
-#         legend.title = element_text(size = 20),  # Larger Legend Title
-#         legend.text = element_text(size = 20)) +
-#   # Larger Legend Text                               # Limit Y Axis
-#   labs(title = NULL,
-#        x = NULL,
-#        y = NULL,
-#        fill = NULL) + guides(fill = guide_legend(title.position = "top",
-#                                                  title.vjust = .5)
-# )
-# Adjust vertical alignment of the legend title
 
 # ############################################################
 # # Plot the mean XWR scores by system for each language
@@ -155,7 +119,7 @@ count <- length(
                              TRUE
                            } else {
                              NULL
-                           }
+                          }
                          }
                        )))
 num_pages <- ceiling(count / 10)
