@@ -8,10 +8,10 @@ library(data.table)
 library(ggplot2)
 
 # Read the first CSV file into a data frame
-paras_table <- fread("results/para_syntax_scores.csv")
+paras_table <- fread("../results/para_syntax_scores.csv")
 
 # Read the second CSV file into a data frame
-sents_table <- fread("results/sent_syntax_scores.csv")
+sents_table <- fread("../results/sent_syntax_scores.csv")
 
 # ############################################################
 # # Plot the mean XWR scores by system for paragraphs and sentences
@@ -272,10 +272,10 @@ ggplot(combined_means, aes(x = system, y = MeanXWR, fill = Level)) +
 # ############################################################
 
 # Read the first CSV file into a data frame
-paras_table <- fread("para_syntax_scores.csv")
+paras_table <- fread("../results/para_syntax_scores.csv")
 
 # Read the second CSV file into a data frame
-sents_table <- fread("sent_syntax_scores.csv")
+sents_table <- fread("../results/sent_syntax_scores.csv")
 
 # Exclude langs 'en-de_news' & 'de_en_news'
 paras_table <- paras_table[!(lang == "en-de_news" | lang == "de_en_news"),]
@@ -333,7 +333,7 @@ library(dplyr)
 library(ggplot2)
 
 # Load the data
-paras_table <- fread("para_syntax_scores.csv")
+paras_table <- fread("../results/para_syntax_scores.csv")
 
 # Define your custom colors
 colors <- setNames(c("#56B4E9", "#666666", "#999999", "#333333"), c("human", "gpt3", "gpt4", "llama"))
@@ -389,49 +389,6 @@ ggplot(paras_table, aes(x = xwr_mean, y = lang, fill = system)) +
   
   # Remove x and y-axis titles and "0.0" from the x-axis
   labs(x = NULL, y = NULL, title = NULL)
-
-# # #stacked plot with horizontal bars
-# ggplot(paras_table, aes(x = xwr_mean, y = lang, fill = system)) +
-#   geom_bar(stat = "identity", position = "stack") +  
-#   scale_fill_manual(values = colors) +
-#   theme_minimal() +
-#   theme(axis.text.x = element_text(hjust = 1, size = 15,),
-#         axis.text.y = element_text(size = 15),
-#         plot.title = element_text(face = "bold")) +
-#   labs(title = NULL,
-#        x = NULL,
-#        y = NULL,
-#        fill = NULL) +
-#   guides(fill = guide_legend(title.position = "top",    # Position the legend title to the top
-#                              title.vjust = 0.5),       # Adjust vertical justification of the title
-#          override.aes = list(x = 7.5))                 # Adjust the position of the legend on the x-axis
-
-
-# # #small, with vertical bars
-# ggplot(paras_table, aes(x = lang, y = xwr_mean, fill = system)) +
-#   geom_bar(stat = "identity", position = "dodge") +
-#   scale_fill_manual(values = colors) +
-#   theme_minimal() +
-#   theme(axis.text.x = element_text(angle = 45, hjust = 1),
-#         plot.title = element_text(face = "bold")) +
-#   labs(title = "XWR Scores in Paragraph-level Translations by Language and System",
-#        x = "Translations",
-#        y = "XWR Score",
-#        fill = "System")
-
-# # #small, with horizontal bars
-# ggplot(paras_table, aes(x = xwr_mean, y = lang, fill = system, label = round(xwr_mean, 2))) +
-#   geom_bar(stat = "identity", position = "dodge") +
-#   scale_fill_manual(values = colors) +
-#   theme_minimal() +
-#   theme(axis.text.x = element_text(hjust = 1, size = 15),
-#         axis.text.y = element_text(size = 15),
-#         plot.title = element_text(face = "bold")) +
-#   labs(title = "XWR Scores in Paragraph-level Translations by Language and System",
-#        x = "XWR Score",
-#        y = NULL,
-#        fill = "System")
-
 
 # ############################################################
 # # Plot the mean Length Variation scores by system for paragraphs and sentences
@@ -518,10 +475,11 @@ ggplot(paras_means_LV_lang, aes(x=system, y=MeanLV, fill= system)) +
   fill=NULL) +
   guides(fill=guide_legend(nrow = 1, byrow = TRUE))
 
-# ############################################################
-# ############################################################
-# ############################################################
-# ############################################################
+# ############################### EXTRAS ##############
+# #################### EXTRAS #########################
+# ########################## EXTRAS ###################
+# ############ EXTRAS #################################
+
 
 # ############################################################
 # # Plot the mean n2m Ratio by system for paragraphs and sentences
