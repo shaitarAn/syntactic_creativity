@@ -73,13 +73,13 @@ cd analysis
 
 **bash run_analysis.sh** : 
 
-**python3 align_sents.py -l ${level}**
+**python3 align_sents.py -l ${level}** : inputs/target_sent_json_{level}-level -> results/{level}_n2m_scores.csv
 
 writes csv files with aligned sentences to output/aligned_sentences_{level} \
 writes results to results/{level}_n2m_scores.csv
 with ["lang", "system", "total_src_sents", "n2m", "n2mR", "length_var", "merges", "splits", "mergesRatio", "splitsRatio"]
 
-**python3 calculate_xwr.py -l ${level}**
+**python3 calculate_xwr.py -l ${level}** : inputs/{level}s/ -> results/{level}_alignment_scores.csv
 
 Performs word alignment and calculates cross word ratio (XWR) \
 writes all alignment data to output/alignments_per_file/ \
