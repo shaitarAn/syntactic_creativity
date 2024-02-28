@@ -152,7 +152,7 @@ for file in os.listdir(input_dir):
     try:
         xwr_mean = np.mean(xwr_list)
         xwr_std = np.std(xwr_list)
-        scores = [lang, system, all_alignments, cross_alignments, xwr_mean, xwr_std]
+        scores = [lang, system, all_alignments, cross_alignments, xwr_mean, xwr_std, len(xwr_list)]
         final_scores.append(scores)
         print(scores)
         print("------------------------------")
@@ -165,7 +165,7 @@ output_file = f"../results/{level}_alignment_scores.csv"
 
 with open(output_file, "w", newline='') as csvfile:
     writer = csv.writer(csvfile)
-    writer.writerow(["lang", "system", "all_alignments", "cross_alignments", "xwr_mean", "xwr_std"])
+    writer.writerow(["lang", "system", "all_alignments", "cross_alignments", "xwr_mean", "xwr_std", "xwr_observation"])
     writer.writerows(final_scores)
 
 # tokens1 = tokenizer.tokenize(paragraph1)
