@@ -8,10 +8,10 @@ library(data.table)
 library(ggplot2)
 
 # Read the first CSV file into a data frame
-paras_table <- fread("para_syntax_scores.csv")
+paras_table <- fread("results/para_syntax_scores.csv")
 
 # Read the second CSV file into a data frame
-sents_table <- fread("sent_syntax_scores.csv")
+sents_table <- fread("results/sent_syntax_scores.csv")
 
 # ############################################################
 # # Plot the mean XWR scores by system for paragraphs and sentences
