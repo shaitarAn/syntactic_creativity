@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 #     'length_var': [0.624328, 0.717716, 0.720074, 0.675851]
 # }
 
-data = "para_syntax_scores.csv"
+data = "../results/para_syntax_scores.csv"
 data = pd.read_csv(data)
 df = pd.DataFrame(data)
 

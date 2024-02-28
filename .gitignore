@@ -1,6 +1,7 @@
 # specific files and folders #
 dataprep/keys.py
 query_openAI.py
+process_results/one2one_only/
 
 # Compiled source #
 ###################

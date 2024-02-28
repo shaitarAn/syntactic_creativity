@@ -1,10 +1,10 @@
 import os
 import csv
 
-level = "para"
+level = "sent"
 
-inputdir = f"data/aligned_sentences_{level}"
-outputdir = f"data/one2one_only/{level}_sents"
+inputdir = f"../output/aligned_sentences_{level}"
+outputdir = f"one2one_only/{level}_sents"
 
 languages = set()
 
@@ -27,7 +27,7 @@ for lang in languages:
     source_nmt_dict = {}
 
     # Open the human translations file and read the sentences into a dictionary
-    human_file = os.path.join(inputdir, f"{lang}.{level}.human.csv")
+    human_file = os.path.join("../output/aligned_sentences_para", f"{lang}.para.human.csv")
     with open(human_file, 'r') as inf:
         reader = csv.reader(inf)
         next(reader)  # Skip header
@@ -59,8 +59,8 @@ for lang in languages:
         intersection_sources = set(source_human_dict.keys()) & set(source_gpt3_dict.keys()) & set(source_gpt4_dict.keys()) & set(source_llama_dict.keys())
 
     # Write the intersected sentences to their respective files
-    src_filename = f"data/one2one_only/{level}_sents/{lang}.source.txt"
-    ref_filename = f"data/one2one_only/{level}_sents/{lang}.human.txt"
+    src_filename = f"one2one_only/{level}_sents/{lang}.source.txt"
+    ref_filename = f"one2one_only/{level}_sents/{lang}.human.txt"
     os.makedirs(os.path.dirname(src_filename), exist_ok=True)
 
     with open(src_filename, 'w') as src_file, open(ref_filename, 'w') as ref_file:
@@ -69,7 +69,7 @@ for lang in languages:
             ref_file.write(source_human_dict[source] + "\n")
 
     for system in systems:
-        system_filename = f"data/one2one_only/{level}_sents/{lang}.{system}.txt"
+        system_filename = f"one2one_only/{level}_sents/{lang}.{system}.txt"
         with open(system_filename, 'w') as sys_file:
             if system == 'gpt3':
                 for source in intersection_sources:
