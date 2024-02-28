@@ -1,7 +1,7 @@
 #!/bin/bash
 
 inputdir="translated/sent-level"
-outputdir="merged"
+outputdir="../inputs/sents"
 mkdir -p $outputdir
 
 

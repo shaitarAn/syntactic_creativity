@@ -1,4 +1,6 @@
+---
 # Dataprep
+---
 
 ## Standardize data format. Retrieve source sentences.
 
@@ -33,7 +35,7 @@ Iterates through /inputs/source_${level}_json/*.json. Uses OpenAI API to produce
 
 ### Translating with Llama 
 
-1. Translate (needs GPU) 
+1. Translate (needs 4 GPUs) work is done on a cluster
 2. **run_json2csv4Llama.sh** -> json2csv.py
     > Converts json files from llama_translations/llama_{level}\_json to llama_translations/llama_{level}\_csv
 3. **clean_Llama_with_gpt4.py** 
@@ -46,7 +48,35 @@ Iterates through /inputs/source_${level}_json/*.json. Uses OpenAI API to produce
 
 5. **remove_gpt4_flags.py**  
 
-6. 
+    >   input_dir llama_translations/llama_{level}_llama_fixed 
+        output_dir = translated/{level}-level
+
+### Merging sentences into paragraphs
+
+Merge the target sentences into pargraphs by aligning them with the source paragrasphs via source sentences
+Source sentences from translated/sent-level come preprocessed, 
+but source paragraphs from ../inputs/source_para_json/${langs}.para.source.json are not preprocessed.
+
+The script preprocesses all texts equaly, removes remaining translation artifacts, normalizes punctuation and spaces.
+
+Outputs csv files that are ready for the analysis.
+
+bash run_merge_sents2paras.sh -> merge_sents2paras.py
+inputdir="translated/sent-level"
+outputdir="../inputs/sents"
+
+### Copy all remaining files into inputs
+
+cp translated/para-level/* ../inputs/paras/
+cp all_csv/\*para\* ../inputs/paras
+cp all_csv/\*sent\* ../inputs/sents
+
+---
+# Analysis
+---
+
+
+
 
 
 
