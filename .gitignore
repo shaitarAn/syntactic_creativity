@@ -1,7 +1,4 @@
 # specific files and folders #
-data/
-output/
-inputs/
 news_merged/
 news_to_merge/
 one2one_only/

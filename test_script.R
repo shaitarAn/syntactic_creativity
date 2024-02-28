@@ -119,12 +119,6 @@ ggplot(combined_data, aes(x = system, y = MeanXWR, fill = Level)) +
 # for paragraphs and sentences
 # ############################################################
 
-# Read the first CSV file into a data frame
-paras_table <- fread("para_syntax_scores.csv")
-
-# Read the second CSV file into a data frame
-sents_table <- fread("sent_syntax_scores.csv")
-
 # Add a column to each data frame to indicate the level
 paras_table$Level <- "Paragraph"
 sents_table$Level <- "Sentence"
@@ -139,82 +133,74 @@ combined_table$Level <- factor(
   combined_table$Level, levels = c('Paragraph', 'Sentence')
 ) # nolint
 
+# order the levels of 'system' with "human" first
+combined_table$system <- factor(
+  combined_table$system, levels = c("human", "gpt3", "gpt4", "llama2", "nmt")
+)
+
 list_df <- split(combined_table, combined_table$lang)
-
-# Use lapply to iterate over list_df and plot each language
-# using ggplot and showing the means and standard errors
-
-# Open a PDF device to save the plots
-pdf("plots.pdf")
-
-lapply(list_df, function(df) {
-  # Create the plot
-  p <- ggplot(df, aes(x = system, y = xwr_mean, fill = Level)) +
-    geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
-    geom_errorbar(aes(ymin = xwr_mean - xwr_std, ymax = xwr_mean + xwr_std),
-                  position = position_dodge(width = 0.7), width = 0.25) +
-    scale_fill_manual(
-      values = c("Paragraph" = "#333333", "Sentence" = "#999999")
-    ) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(hjust = 0.5, size = 25),
-          axis.text.y = element_text(size = 20),
-          legend.position = "top",
-          legend.box = "horizontal",
-          legend.title = element_text(size = 20),
-          legend.text = element_text(size = 20)) +
-    labs(title = paste("Plot for language:", unique(df$lang)),
-         x = NULL,
-         y = NULL,
-         fill = NULL) +
-    guides(fill = guide_legend(title.position = "top", title.vjust = 0.5))
-  print(p)
-})
-
-# Close the PDF device
-dev.off()
 
 # Calculate the number of pages needed to fit all the plots
 num_plots <- length(list_df)
-num_pages <- ceiling(num_plots / 10)
 
 # Open a PDF device to save the plots
 pdf("plots.pdf")
 
+count <- length(
+                Filter(
+                       Negate(is.null),
+                       lapply(list_df,
+                         function(df) {
+                           if (nrow(df) >= 8) {
+                             TRUE
+                           } else {
+                             NULL
+                           }
+                         }
+                       )))
+num_pages <- ceiling(count / 10)
+
 # Iterate over each page
-for (page in 1:num_pages) {
-  start_plot <- (page - 1) * 10 + 1
+for (page in 1:num_pages){
+  start_plot <- (page -1)*5 +1
   end_plot <- min(start_plot + 9, num_plots)
 
-  # Create a new page
-  if (page > 1) {
-    plot.new()
-    plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
-  }
+  # Check if there are enough plots remaining to fill a complete page
+  if (start_plot <= num_plots) {
+    # Create a new page
+    if (page > 1) {
+      plot.new()
+      plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
+    }
 
-  # Use lapply to iterate over the plots for the current page
-  plots <- lapply(list_df[start_plot:end_plot], function(df) {
-    # Create the plot
-    p <- ggplot(df, aes(x = system, y = xwr_mean, fill = Level)) +
-      geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
-      geom_errorbar(aes(ymin = xwr_mean - xwr_std, ymax = xwr_mean + xwr_std),
-                    position = position_dodge(width = 0.7), width = 0.25) +
-      scale_fill_manual(
-        values = c("Paragraph" = "#333333", "Sentence" = "#999999")
-      ) +
-      theme_minimal() +
-      theme(axis.text.x = element_text(hjust = 0.5, size = 12),
-            axis.text.y = element_text(size = 10),
-            legend.position = "none") +
-      labs(title = paste(unique(df$lang)),
-           x = NULL,
-           y = NULL,
-           fill = NULL)
-    # Return the plot
-    return(p)
-  })
-  # Arrange the plots in a grid layout and print them
-  gridExtra::grid.arrange(grobs = plots, ncol = 2)
+    # Use lapply to iterate over the plots for the current page
+    plots <- lapply(list_df[start_plot:end_plot], function(df) {
+      if(nrow(df) >= 8){
+      p <- ggplot(df, aes(x = system, y = xwr_mean, fill = Level)) +
+        geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
+        geom_errorbar(aes(ymin = xwr_mean - xwr_std, ymax = xwr_mean + xwr_std),
+                      position = position_dodge(width = 0.7), width = 0.25) +
+        scale_fill_manual(
+          values = c("Paragraph" = "#333333", "Sentence" = "#999999")
+        ) +
+        theme_minimal() +
+        theme(axis.text.x = element_text(hjust = 0.5, size = 12),
+              axis.text.y = element_text(size = 10),
+              legend.position = "none") +
+        labs(title = paste(unique(df$lang)),
+             x = NULL,
+             y = NULL,
+             fill = NULL)
+      # Return the plot
+      return(p)
+      } else{
+        return(NULL)
+      }
+    })
+    plots <- Filter(Negate(is.null), plots)
+    # Arrange the plots in a grid layout and print them
+    gridExtra::grid.arrange(grobs = plots, ncol = 2)
+  }
 }
 
 # Close the PDF device

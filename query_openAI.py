@@ -2,60 +2,68 @@ import os
 import openai
 import requests
 import json
-from translation.config import *
+from dataprep.keys import *
 
 openai.organization = ORGANIZATION
 openai.api_key = OPENAI_API_KEY
 
 task = """
-# Calculate mean xwr_mean for paragraphs
-paras_means <- paras_table[, .(MeanXWR = mean(xwr_mean)), by = system]
+list_df <- split(combined_table, combined_table$lang)
 
-# Calculate mean xwr for sentences
-sents_means <- sents_table[, .(MeanXWR = mean(xwr_mean)), by = system]
+# Calculate the number of pages needed to fit all the plots
+num_plots <- length(list_df)
+num_pages <- ceiling(num_plots / 10)
 
-# calculate the standard deviation for paragraphs and sentences
-paras_sd <- paras_table[, .(SD_XWR = sd(xwr_mean)), by = system]
-sents_sd <- sents_table[, .(SD_XWR = sd(xwr_mean)), by = system]
+# Open a PDF device to save the plots
+pdf("plots.pdf")
 
-# Add a column to each data frame to indicate the level
-paras_means$Level <- "Paragraph"
-sents_means$Level <- "Sentence"
+# Iterate over each page
+for (page in 1:num_pages) {
+  start_plot <- (page - 1) * 10 + 1
+  end_plot <- min(start_plot + 9, num_plots)
 
-# Combine the two tables
-combined_means <- rbind(paras_means, sents_means)
+  # Check if there are enough plots remaining to fill a complete page
+  if (start_plot <= num_plots) {
+    # Create a new page
+    if (page > 1) {
+      plot.new()
+      plot.window(xlim = c(0, 1), ylim = c(0, 1), asp = 1)
+    }
 
-combined_means <- combined_means[!(system == "human" & Level == "Sentence")]
+    # Use lapply to iterate over the plots for the current page
+    plots <- lapply(list_df[start_plot:end_plot], function(df) {
+      if(nrow(df) >= 8){
+      p <- ggplot(df, aes(x = system, y = xwr_mean, fill = Level)) +
+        geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
+        geom_errorbar(aes(ymin = xwr_mean - xwr_std, ymax = xwr_mean + xwr_std),
+                      position = position_dodge(width = 0.7), width = 0.25) +
+        scale_fill_manual(
+          values = c("Paragraph" = "#333333", "Sentence" = "#999999")
+        ) +
+        theme_minimal() +
+        theme(axis.text.x = element_text(hjust = 0.5, size = 12),
+              axis.text.y = element_text(size = 10),
+              legend.position = "none") +
+        labs(title = paste(unique(df$lang)),
+             x = NULL,
+             y = NULL,
+             fill = NULL)
+      # Return the plot
+      return(p)
+      } else{
+        return(NULL)
+      }
+    })
+    plots <- Filter(Negate(is.null), plots)
+    # Arrange the plots in a grid layout and print them
+    gridExtra::grid.arrange(grobs = plots, ncol = 2)
+  }
+}
 
+# Close the PDF device
+dev.off()
 
-# Convert 'system' and 'Level' to factor for better plotting control
-combined_means$system <- factor(
-  combined_means$system, levels = unique(combined_means$system)
-)
-combined_means$Level <- factor(
-  combined_means$Level, levels = c("Paragraph", "Sentence")
-)
-
-# Now plot the combined table
-ggplot(combined_means, aes(x = system, y = MeanXWR, fill = Level)) +
-  geom_bar(stat = "identity", position = position_dodge(), width = 0.7) +
-  scale_fill_manual(
-    values = c("Paragraph" = "#333333", "Sentence" = "#999999")
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(hjust = 0.5,size = 25),
-        axis.text.y = element_text(size = 20),   # Larger y-axis labels
-        legend.position = "top",               # Move legend to top
-        legend.box = "horizontal",             # Horizontal Legend
-        legend.title = element_text(size = 20),  # Larger Legend Title
-        legend.text = element_text(size = 20)) +
-  # Larger Legend Text                               # Limit Y Axis
-  labs(title = NULL,
-       x = NULL,
-       y = NULL,
-       fill = NULL) + guides(fill = guide_legend(title.position = "top",
-                                                 title.vjust = .5)
-) How do i display the std for each bar in the plot?
+This creates 3 pages with the second page being empty. The first page contains 10 plots and the third page contains 10 plots. How can avoid creating an empty page?
 
 """
 
