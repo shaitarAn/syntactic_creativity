@@ -53,12 +53,26 @@ def write_to_file(filename, texts):
         writer.writerow(["id", "source", "translation"])
         counter = 0
         for para, merge in texts:
+            para = remove_html_chars(para)
+            para = re.sub(person_pattern, '', para)
+            merge = remove_html_chars(merge)
+            merge = re.sub(person_pattern, '', merge)
+
             if para.strip() == "" or merge.strip() == "":
                 continue
+
             merge = re.sub(r'\s+', ' ', merge)
+            merge = merge.replace(". . ", ". ")
+            merge = merge.replace(", , ", ", ")
+            merge = re.sub(r"\.\.\.+", "...", merge)
+            merge = re.sub(r"\.\.", ".", merge)
+            
+
             para = re.sub(r'\s+', ' ', para)
+            para = re.sub(r"\.\.\.+", "...", para)
             para = re.sub(r"\.\.", ".", para)
-            para = re.sub(r"\.\.+", "...", para)
+            para = para.replace(", , ", ", ")
+
             counter += 1
             writer.writerow([counter, para, merge])
 
@@ -74,42 +88,50 @@ def align_sents_and_parasrc(parasrc, sentfile):
         lang = langs.split("-")[0]
         para = json.loads(para)["source"].strip()
         para = preprocess_text(para, lang)
-        para_no_persons = re.sub(person_pattern, '', para)
+        para = re.sub(person_pattern, '', para)
+        para = remove_html_chars(para)
+        # Create a copy of para
+        para_copy = para[:]
 
         para_sens = []  # Use a list to store sentences for each paragraph
         sent_gen = zip(sentsrc, senttgt)  # Create a generator for zipped sentences
-        print()
-        print("-------------------")
-        print("para: ", para)
-        print()
+        # print()
+        # print("-------------------")
+        # print("para: ", para)
+        # print()
         for s, t in sent_gen:
-            # print(s)
-            s = remove_mt_artifacts(s)
-            # t = remove_mt_artifacts(t)
 
-            if langs in ["en-de_news", "de-en_news"] and len(s.split( )) == 1 or t.strip() in ['"Ich bin ein Maschinenübersetzungssystem, das Sätze aus dem Englischen ins Deutsche übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."', '"Ich bin ein Machine-Translation-System, das Sätze von Englisch nach Deutsch übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."', '"Ich bin ein maschinelles Übersetzungssystem, das Sätze aus dem Englischen ins Deutsche übersetzt."', '"Ich bin ein maschinelles Übersetzungssystem, das Sätze von Englisch nach Deutsch übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."']:
-                para_no_persons = para_no_persons.replace(s, "")
+            s = remove_html_chars(s)
+            t = remove_html_chars(t)
+
+            s = remove_mt_artifacts(s)
+            t = remove_mt_artifacts(t)
+
+            if s == "":
+                continue
+
+            if langs in ["en-de_news", "de-en_news"] and len(s.split()) == 1:
+                para = para.replace(s.strip(), '')
+                continue
+            
+            elif t.strip() in ['"Ich bin ein Maschinenübersetzungssystem, das Sätze aus dem Englischen ins Deutsche übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."', '"Ich bin ein Machine-Translation-System, das Sätze von Englisch nach Deutsch übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."', '"Ich bin ein maschinelles Übersetzungssystem, das Sätze aus dem Englischen ins Deutsche übersetzt."', '"Ich bin ein maschinelles Übersetzungssystem, das Sätze von Englisch nach Deutsch übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."']:
+                para = para.replace(s.strip(), '')
+                print("removed line")
+                print(s, t)
+                print()
                 continue
             # if s.strip() matches the person_pattern, skip line
             elif re.match(person_pattern, s.strip()):
-                para_no_persons = para_no_persons.replace(s, "")
+                para = para.replace(s.strip(), '')
                 continue
 
-            elif s.strip() in para:
-                print(s)
-                t = remove_mt_artifacts(t)
-                # t = remove_html_chars(t)
-                t = re.sub(person_pattern, '', t)
-                t = re.sub(r"\.\.", ".", t)
-                t = re.sub(r"\.\.+", "...", t)
-
+            if s.strip() in para:
                 para_sens.append(t.strip())  # Add sentence to list
                 
-
                 # Remove the matched sentence from senssrc
                 para = para.replace(s.strip(), '', 1)
 
-        paragraphs.append(para_no_persons)
+        paragraphs.append(para_copy)
         para_sens = " ".join(para_sens)
         grouped_sens.append(para_sens)
         # print("-------------------------------")

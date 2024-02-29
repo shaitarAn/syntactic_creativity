@@ -11,7 +11,7 @@ langslist=""
 # iterate through the files in the directory
 for file in ${inputdir}/*csv; do
     
-    echo "Processing file: $file"
+    # echo "Processing file: $file"
 
     langs=$(basename $file | cut -d'.' -f1 )
     # append langs to langslist

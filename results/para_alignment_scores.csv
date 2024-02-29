@@ -1,4 +1,4 @@
-lang,system,all_alignments,cross_alignments,xwr_mean,xwr_std,xwr_observation
+lang,system,all_alignments,cross_alignments,xwr_mean,xwr_std,xwr_observations
 cs-pl,gpt3,1067,409,0.39110408536184343,0.19488942153932348,10
 cs-pl,human,912,580,0.6256085272658425,0.23903210256293503,10
 de-en_news,gpt4,26561,25557,0.6082396368244611,0.716294298123433,549

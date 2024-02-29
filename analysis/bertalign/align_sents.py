@@ -82,7 +82,7 @@ for lang in languages:
                         target_text = [json.loads(t)["translation"] for t in tgtF.readlines()]
 
                         writer = csv.writer(outF, quotechar = '"')
-                        writer.writerow(["id", "source", "target", "n2m"])
+                        writer.writerow(["id", "source", "translation", "n2m"])
 
                         aligner = Bertalign("\n".join(source_text), "\n".join(target_text))  
                         aligner.align_sents()
@@ -96,9 +96,9 @@ for lang in languages:
 
                             # Skip the iteration if either source or target line is empty
                             if not src_line.strip() or not tgt_line.strip() or len(src_line.strip()) == 0 or len(tgt_line.strip()) == 0:
-                                print("src_line", src_line)
-                                print("tgt_line", tgt_line)
-                                print()
+                                # print("src_line", src_line)
+                                # print("tgt_line", tgt_line)
+                                # print()
                                 continue
                             
                             slines += 1

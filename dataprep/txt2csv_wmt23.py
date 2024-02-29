@@ -35,7 +35,7 @@ for lang in ["de-en", "en-de"]:
             tgt_lines = tgt.readlines()
             writer = csv.writer(out)
             count = 0
-            writer.writerow(["id", "source", "target"])
+            writer.writerow(["id", "source", "translation"])
             for src_line, tgt_line in zip(src_lines, tgt_lines):
                 count += 1
                 writer.writerow([count, src_line.strip().replace("\n", ""), tgt_line.strip().replace("\n", "")])

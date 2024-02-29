@@ -16,7 +16,7 @@ def write_to_file(filename, paragraphs):
     outputfile = os.path.join(output_dir, filename)
     with open(outputfile, 'w', encoding='utf-8') as file:
         writer = csv.writer(file)
-        writer.writerow(["id", "source", "target"])
+        writer.writerow(["id", "source", "translation"])
         count = 0
         for s, t in zip(paragraphs["src"], paragraphs["tgt"]):
             count += 1

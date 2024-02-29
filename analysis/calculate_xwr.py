@@ -165,7 +165,7 @@ output_file = f"../results/{level}_alignment_scores.csv"
 
 with open(output_file, "w", newline='') as csvfile:
     writer = csv.writer(csvfile)
-    writer.writerow(["lang", "system", "all_alignments", "cross_alignments", "xwr_mean", "xwr_std", "xwr_observation"])
+    writer.writerow(["lang", "system", "all_alignments", "cross_alignments", "xwr_mean", "xwr_std", "xwr_observations"])
     writer.writerows(final_scores)
 
 # tokens1 = tokenizer.tokenize(paragraph1)

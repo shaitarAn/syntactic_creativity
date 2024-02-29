@@ -87,14 +87,13 @@ def has_digit(text):
         return True
 
 def remove_html_chars(text):
-    # text = text.replace("<unintelligible/>", "(unintelligible)")
-    # text = text.replace("<parallel_talk>", "(parallel_talk)")
-    # text = text.replace("</parallel_talk>", "(parallel_talk)")
     text = text.replace("<unintelligible/>", "")
+    text = text.replace("<unverständlich/> ", "") 
+    text = text.replace("<Unverständlich/>", "")
     text = text.replace("<parallel_talk>", "")
     text = text.replace("</parallel_talk>", "")
-    text = text.replace("<laugh/>", "")
-    text = text.replace("*lacht*", "")
+    # text = text.replace("<laugh/>", "")
+    # text = text.replace("*lacht*", "")
     return text
 
 def remove_mt_artifacts(text):
