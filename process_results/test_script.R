@@ -77,7 +77,7 @@ ggplot(combined_data, aes(x = system, y = MeanXWR, fill = Level)) +
        fill = "Level")
 
 # save the plot to a file
-ggsave("../results/mean_xwr_combined.pdf", width = 20, height = 10, units = "in")
+ggsave("../viz/mean_xwr_combined.pdf", width = 20, height = 10, units = "in")
 
 
 
@@ -111,7 +111,7 @@ list_df <- split(combined_table, combined_table$lang)
 num_plots <- length(list_df)
 
 # Open a PDF device to save the plots
-pdf("../results/mean_xwr_all_langs.pdf")
+pdf("../viz/mean_xwr_all_langs.pdf")
 
 count <- length(
                 Filter(
