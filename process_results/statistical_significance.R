@@ -129,7 +129,7 @@ ggplot(results_df, aes(x = System, y = Cohen_d, fill = Level)) +
 
 
 # Save the plot to a file
-ggsave("../results/cohen_d_effect_size.pdf", width = 12, height = 8, units = "in")
+ggsave("../viz/cohen_d_effect_size.pdf", width = 12, height = 8, units = "in")
 
 # Print the plot
 print(ggplot(results_df, aes(x = System, y = Cohen_d, fill = Level)) +

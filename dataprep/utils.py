@@ -98,9 +98,10 @@ def remove_html_chars(text):
     return text
 
 def remove_mt_artifacts(text):
-    text = text.replace("Sorry, but I am unable to translate an unintelligible text. If you provide a clear text in English, I will be happy to help you with the translation into German.", "(unintelligible)") # 4 occurences in de-en gpt3
-    text = text.replace("Translate the following text into de. Output only the translation itself without additional commentary or explanations. Text: ", "") # 68 occurences in en-de_news.gpt3!
-    text = text.replace("Translate the following text into de. Output only the translation itself without additional commentary or explanations.  Text: ", "")
+    text = text.replace("Sorry, but I am unable to translate an unintelligible text. If you provide a clear text in English, I will be happy to help you with the translation into German.", "") # 4 occurences in de-en gpt3
+    text = text.replace("Sorry, but I am unable to provide a translation without the actual text. Could you please provide the exact text that needs to be translated?", "") # 12 occurences in de-en gpt3
+    text = text.replace("Translate the following text into German. Output only the translation itself without additional commentary or explanations. Text: ", "") # 68 occurences in en-de_news.gpt3!
+    text = text.replace("Translate the following text into German. Output only the translation itself without additional commentary or explanations.  Text: ", "")
     text = text.replace("Could you please provide the text you want me to translate?", "") # 1 time in en-de gpt4
     text = text.replace("As a translator, I need the text to be translated. Currently, the text """, "")
     text = text.replace('"" is not providing any content to be translated to German. Please provide the necessary details.', "") # 8 occurences de-en gpt4 for sentences like (PERSON#)

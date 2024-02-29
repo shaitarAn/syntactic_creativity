@@ -15,11 +15,13 @@ parser = argparse.ArgumentParser(description='Merge the target sentences into pa
 
 parser.add_argument('-ps', '--parasrc', required=True, help='source file with paragraph segments')  
 parser.add_argument('-sf', '--sentfile', required=True, help='source file with sentence segments')
+parser.add_argument('-out', '--output', required=True, help='output file')
 
 args = parser.parse_args()
 
 parasrc = args.parasrc
 sentfile = args.sentfile
+outputdir = args.output
 
 if "_news" in sentfile:
     langs = sentfile.split("_")[0]
@@ -27,7 +29,7 @@ else:
     langs = sentfile.split(".")[0]
 
 # Define the pattern for matching (PERSON#)
-person_pattern = re.compile(r'\(PERSON\d\d*\)')
+person_pattern = re.compile(r'[\[\(]?PERSON\d\d*[\)\]]?')
 
 def read_file(file):
     with open(file, 'r') as f:
@@ -83,10 +85,15 @@ def align_sents_and_parasrc(parasrc, sentfile):
         for s, t in sent_gen:
             # print(s)
             s = remove_mt_artifacts(s)
-            # s = remove_html_chars(s)
+            # t = remove_mt_artifacts(t)
 
-            if lang in ["de"] and len(s.split( )) == 1 or t.strip() in ['"Ich bin ein Maschinenübersetzungssystem, das Sätze aus dem Englischen ins Deutsche übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."', '"Ich bin ein Machine-Translation-System, das Sätze von Englisch nach Deutsch übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."', '"Ich bin ein maschinelles Übersetzungssystem, das Sätze aus dem Englischen ins Deutsche übersetzt."', '"Ich bin ein maschinelles Übersetzungssystem, das Sätze von Englisch nach Deutsch übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."']:
+            if langs in ["en-de_news", "de-en_news"] and len(s.split( )) == 1 or t.strip() in ['"Ich bin ein Maschinenübersetzungssystem, das Sätze aus dem Englischen ins Deutsche übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."', '"Ich bin ein Machine-Translation-System, das Sätze von Englisch nach Deutsch übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."', '"Ich bin ein maschinelles Übersetzungssystem, das Sätze aus dem Englischen ins Deutsche übersetzt."', '"Ich bin ein maschinelles Übersetzungssystem, das Sätze von Englisch nach Deutsch übersetzt. Ich antworte nur mit der Übersetzung, ohne zusätzliche Kommentare."']:
                 para_no_persons = para_no_persons.replace(s, "")
+                continue
+            # if s.strip() matches the person_pattern, skip line
+            elif re.match(person_pattern, s.strip()):
+                para_no_persons = para_no_persons.replace(s, "")
+                continue
 
             elif s.strip() in para:
                 print(s)
@@ -115,5 +122,5 @@ grouped_sens = align_sents_and_parasrc(parasrc, sentfile)
 # write the merged paragraphs to a file
 nameparts = os.path.basename(sentfile).split(".")
 output = ".".join(nameparts[0:3]) + ".merged.csv"
-output = os.path.join("merged", output)
+output = os.path.join(outputdir, output)
 write_to_file(output, grouped_sens)

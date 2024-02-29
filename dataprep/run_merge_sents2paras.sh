@@ -32,7 +32,7 @@ for langs in $langslist; do
         parasrc="../inputs/source_para_json/${langs}.para.source.json"
         sentfile="${inputdir}/${langs}.sent.${system}.csv"
 
-        python merge_sents2paras.py -ps "$parasrc" -sf "$sentfile"
+        python merge_sents2paras.py -ps "$parasrc" -sf "$sentfile" -out "$outputdir"
 
     done
 
