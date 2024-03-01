@@ -71,9 +71,9 @@ ggplot(combined_data, aes(x = system, y = MeanXWR, fill = Level)) +
         legend.box = "vertical",
         legend.title = element_text(size = 20),
         legend.text = element_text(size = 20)) +
-  labs(title = "Mean XWR and STD XWR Scores by System and Level",
+  labs(title = "Mean XWR and STD XWR Scores Across All Languages",
        x = NULL,
-       y = "Mean XWR",
+       y = NULL,
        fill = "Level")
 
 # save the plot to a file
@@ -111,7 +111,7 @@ list_df <- split(combined_table, combined_table$lang)
 num_plots <- length(list_df)
 
 # Open a PDF device to save the plots
-pdf("../viz/mean_xwr_all_langs.pdf")
+pdf("../viz/mean_xwr_per_lang.pdf")
 
 count <- length(
                 Filter(
