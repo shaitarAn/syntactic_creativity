@@ -48,6 +48,13 @@ results_df <- data.frame(Language = character(),
                          Cohen_d = numeric(),
                          stringsAsFactors = FALSE)
 
+t_test_results_df <- data.frame(Language = character(),
+                         System = character(),
+                         Level = character(),
+                         t_statistic = numeric(),
+                         p_value = numeric(),
+                         stringsAsFactors = FALSE)
+
 # Function to calculate Cohen's d effect size
 calculate_cohens_d <- function(lang_df) {
   # Filter data for Paragraph and Sentence levels separately
@@ -94,6 +101,75 @@ calculate_cohens_d <- function(lang_df) {
   }
 }
 
+# function to calculcate the t-test
+calculate_t_test <- function(lang_df) {
+  # Filter data for Paragraph and Sentence levels separately
+  paragraph_data <- lang_df[lang_df$Level == "Paragraph", ]
+  sentence_data <- lang_df[lang_df$Level == "Sentence", ]
+  
+  # Get the human mean and standard deviation at paragraph level
+  human_mean_paragraph <- paragraph_data[paragraph_data$system == "human", ]$xwr_mean
+  human_sd_paragraph <- paragraph_data[paragraph_data$system == "human", ]$xwr_std
+  sample1_n <- paragraph_data[paragraph_data$system == "human", ]$xwr_observation
+  
+  # Loop through each system at both paragraph and sentence levels
+  systems <- unique(c("gpt3", "gpt4", "llama2", "nmt"))
+  for (sys in systems) {
+    # Check if there is data available for the system at paragraph level
+    if (any(paragraph_data$system == sys)) {
+      # Get the mean and standard deviation for the system at paragraph level
+      sys_mean_paragraph <- paragraph_data[paragraph_data$system == sys, ]$xwr_mean
+      sys_sd_paragraph <- paragraph_data[paragraph_data$system == sys, ]$xwr_std
+      sample2_n <- paragraph_data[paragraph_data$system == sys, ]$xwr_observation
+      
+      # Calculate t-test at paragraph level
+      se_diff <- sqrt(((human_sd_paragraph^2)/ sample1_n) + ((sys_sd_paragraph^2)/ sample2_n))
+      
+      t_statistic_para <- abs(human_mean_paragraph - sys_mean_paragraph) / se_diff
+
+      # get degrees of freedom
+      df <- sample1_n + sample2_n - 2
+
+      # calculate p-value
+      p_value_para <- 2 * pt(abs(t_statistic_para), df, lower.tail = FALSE)
+
+      # Add the results to the dataframe
+      t_test_results_df <<- rbind(t_test_results_df, data.frame(Language = lang_df$lang[1],
+                                                 System = sys,
+                                                 Level = "Paragraph",
+                                                 t_statistic = t_statistic_para,
+                                                 p_value = p_value_para,
+                                                 stringsAsFactors = FALSE))
+
+      # calculate the t-test at sentence level
+      sys_mean_sentence <- sentence_data[sentence_data$system == sys, ]$xwr_mean
+      sys_sd_sentence <- sentence_data[sentence_data$system == sys, ]$xwr_std
+      sample2_n <- sentence_data[sentence_data$system == sys, ]$xwr_observation
+
+      # Calculate t-test at sentence level
+      se_diff <- sqrt(((human_sd_paragraph^2)/ sample1_n) + ((sys_sd_sentence^2)/ sample2_n))
+
+      t_statistic_sent <- abs(human_mean_paragraph - sys_mean_sentence) / se_diff
+
+      # get degrees of freedom
+      df <- sample1_n + sample2_n - 2
+
+      # calculate p-value
+      p_value_sent <- 2 * pt(abs(t_statistic_sent), df, lower.tail = FALSE)
+
+      # Add the results to the dataframe
+      t_test_results_df <<- rbind(t_test_results_df, data.frame(Language = lang_df$lang[1],
+                                                 System = sys,
+                                                 Level = "Sentence",
+                                                 t_statistic = t_statistic_sent,
+                                                 p_value = p_value_sent,
+                                                 stringsAsFactors = FALSE))
+
+  }
+}
+}
+
+
 # Iterate over each language dataframe in the list_df
 for (lang_df in list_df) {
   calculate_cohens_d(lang_df)
@@ -131,26 +207,72 @@ ggplot(results_df, aes(x = System, y = Cohen_d, fill = Level)) +
 # Save the plot to a file
 ggsave("../viz/cohen_d_effect_size.pdf", width = 12, height = 8, units = "in")
 
-# Print the plot
-print(ggplot(results_df, aes(x = System, y = Cohen_d, fill = Level)) +
-        geom_bar(stat = "identity", position = "dodge") +
-        facet_wrap(~Language, scales = "free") +
-        theme_minimal() +
-        theme(axis.text.x = element_text(hjust = 0.5)) +
-        labs(title = "Cohen's d Effect Size for XWR as compared to human values",
-             x = NULL,
-             y = NULL,
-             fill = "Level") +
-        scale_fill_manual(values = c("Paragraph" = "lightblue", "Sentence" = "gray")) +
-        theme(legend.position = "bottom") +
-        theme(legend.title = element_blank()) +
-        theme(legend.text = element_text(size = 8)) +
-        theme(axis.text.x = element_text(size = 8)) +
-        theme(axis.text.y = element_text(size = 8)) +
-        theme(axis.title.x = element_text(size = 10)) +
-        theme(axis.title.y = element_text(size = 10)) +
-        theme(plot.title = element_text(size = 12)) +
-        theme(legend.key.size = unit(0.5, "cm")) +
-        theme(legend.key = element_rect(fill = "white", colour = "white")) +
-        theme(legend.background = element_rect(fill = "white", colour = "white"))
-)
+# Perform t-test for each language
+for (lang_df in list_df) {
+  calculate_t_test(lang_df)
+}
+
+# Print the combined results dataframe
+print(t_test_results_df)
+
+# Save the results dataframe to a CSV file
+write.csv(t_test_results_df, file = "../results/t_test_results.csv", row.names = FALSE)
+
+# Plot the t-test results
+ggplot(t_test_results_df, aes(x = System, y = t_statistic, fill = Level)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~Language, scales = "free") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(hjust = 0.5)) +
+  labs(title = "t-test results for XWR as compared to human values",
+       x = NULL,
+       y = NULL,
+       fill = "Level") +
+  scale_fill_manual(values = c("Paragraph" = "lightblue", "Sentence" = "gray")) +
+  theme(legend.position = "bottom") +
+  theme(legend.title = element_blank()) +
+  theme(legend.text = element_text(size = 12)) +
+  theme(axis.text.x = element_text(size = 8)) +
+  theme(axis.text.y = element_text(size = 8)) +
+  theme(plot.title = element_text(size = 14)) +
+  theme(strip.text = element_text(size = 10)) +  # Bold and size 12 subplot titles
+  theme(legend.key.size = unit(0.5, "cm")) +
+  theme(legend.key = element_rect(fill = "white", colour = "white")) +
+  theme(legend.background = element_rect(fill = "white", colour = "white"))
+
+# Save the plot to a file
+ggsave("../viz/t_test_results.pdf", width = 12, height = 8, units = "in")
+
+# Plot the p-values
+ggplot(t_test_results_df, aes(x = System, y = p_value, fill = Level)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~Language, scales = "free") +
+  geom_hline(yintercept = 0.05, linetype = "dashed", color = "red") +  # Add threshold line
+  theme_minimal() +
+  theme(axis.text.x = element_text(hjust = 0.5)) +
+  labs(title = "p-values for t-test results for XWR as compared to human values",
+       x = NULL,
+       y = NULL,
+       fill = "Level") +
+  scale_fill_manual(values = c("Paragraph" = "lightblue", "Sentence" = "gray")) +
+  theme(legend.position = "bottom") +
+  theme(legend.title = element_blank()) +
+  theme(legend.text = element_text(size = 12)) +
+  theme(axis.text.x = element_text(size = 8)) +
+  theme(axis.text.y = element_text(size = 8)) +
+  theme(plot.title = element_text(size = 14)) +
+  theme(strip.text = element_text(size = 10)) +  # Bold and size 12 subplot titles
+  theme(legend.key.size = unit(0.5, "cm")) +
+  theme(legend.key = element_rect(fill = "white", colour = "white")) +
+  theme(legend.background = element_rect(fill = "white", colour = "white"))
+
+# Save the plot to a file
+ggsave("../viz/p_value_results.pdf", width = 12, height = 8, units = "in")
+
+
+# End of script
+
+
+
+
+
