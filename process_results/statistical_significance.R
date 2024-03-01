@@ -84,7 +84,7 @@ calculate_cohens_d <- function(lang_df) {
       pooled_sd <- sqrt(((human_observation - 1) * human_sd_paragraph^2 + (sys_observation - 1) * sys_sd_paragraph^2) / (human_observation + sys_observation - 2))
       
       # Calculate Cohen's d effect size at paragraph level with hedge's g correction
-      cohens_d_paragraph <- (human_mean_paragraph - sys_mean_paragraph) / pooled_sd * sqrt((total_observation - 3) / (total_observation - 2.25))
+      cohens_d_paragraph <- (sys_mean_paragraph - human_mean_paragraph) / pooled_sd * sqrt((total_observation - 3) / (total_observation - 2.25))
       # cohens_d_paragraph <- (sys_mean_paragraph - human_mean_paragraph) / sqrt((human_sd_paragraph^2 + sys_sd_paragraph^2) / 2)
       
       # Add the results to the dataframe
@@ -109,7 +109,7 @@ calculate_cohens_d <- function(lang_df) {
     pooled_sd_sentence <- sqrt(((human_observation - 1) * human_sd_paragraph^2 + (sys_observation - 1) * sys_sd_sentence^2) / (human_observation + sys_observation - 2))
     
     # Calculate Cohen's d effect size at sentence level with hedge's g correction
-    cohens_d_sentence <- (human_mean_paragraph - sys_mean_sentence) / pooled_sd_sentence * sqrt((total_observation - 3) / (total_observation - 2.25))
+    cohens_d_sentence <- (sys_mean_sentence - human_mean_paragraph) / pooled_sd_sentence * sqrt((total_observation - 3) / (total_observation - 2.25))
     
     
     # Add the results to the dataframe
