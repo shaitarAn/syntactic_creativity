@@ -148,3 +148,10 @@ for file in os.listdir(f"llama_translations/llama_{level}_csv"):
 
     startline = 1
 
+# f'<s> [INST] <<SYS>> 
+# You are a proffessional translator from {{ source_lang }} into {{ target_lang }}. 
+# <</SYS>> Translate the following text from {{ source_lang }} into {{ target_lang }}. 
+# Output only the translation itself without additional commentary or explanations. 
+# Text: {{ instruction }} [/INST]'
+
+
