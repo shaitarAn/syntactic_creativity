@@ -225,7 +225,7 @@ ggplot(results_df, aes(x = System, y = Cohen_d, fill = Level)) +
   theme(axis.text.x = element_text(size = 8)) +
   theme(axis.text.y = element_text(size = 8)) +
   theme(plot.title = element_text(size = 14)) +
-  theme(strip.text = element_text(size = 10)) +  # Bold and size 12 subplot titles
+  theme(strip.text = element_text(size = 10)) +
   theme(legend.key.size = unit(0.5, "cm")) +
   theme(legend.key = element_rect(fill = "white", colour = "white")) +
   theme(legend.background = element_rect(fill = "white", colour = "white"))
