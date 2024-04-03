@@ -2,6 +2,7 @@
 dataprep/keys.py
 query_openAI.py
 process_results/one2one_only/
+few-shot/keys.py
 
 # Compiled source #
 ###################
