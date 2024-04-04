@@ -42,11 +42,17 @@ frequency_penalty = int(args.frequency_penalty)
 level = args.level
 task = args.task
 
-prompts = pd.read_csv(prompt_file, sep="\t")
+prompts = pd.read_csv(prompt_file, sep="\t", encoding="utf-8")
 # select rows where column "code" is equal to source_lang-target_lang
 prompts = prompts.loc[prompts['code'] == f"{args.source_lang}-{args.target_lang}"]
+print(prompts)
+
 # zip the columns "source" and "target" into a list of tuples
-prompts = list(zip(prompts["source"], prompts["target"]))
+zipped_prompts = list(zip(prompts["source"], prompts["target"]))
+
+for item in zipped_prompts:
+    print(item)
+    print("\n")
 
 
 startCount = int(args.count)
@@ -89,11 +95,18 @@ try:
                 continue
             count += 1
 
-            promptline = f"Original text in {source_lang}: {prompts[0][0]} \n Translation into {target_lang}: {prompts[0][1]} \n Original text in {source_lang}: {prompts[1][0]} \n Translation into {target_lang}: {prompts[1][1]} \
-            \n Original text in {source_lang}: {prompts[2][0]} \n Translation into {target_lang}: {prompts[2][1]} \
-            \n Original text in {source_lang}: {prompts[3][0]} \n Translation into {target_lang}: {prompts[3][1]} \
-            \n Original text in {source_lang}: {prompts[4][0]} \n Translation into {target_lang}: {prompts[4][1]} \
-            \n Original text in {source_lang}: {source_text} \n Translation into {target_lang}:"
+            promptline = f"""Original text in {source_lang}: {zipped_prompts[0][0]}\n\
+                            Translation into {target_lang}: {zipped_prompts[0][1]}\n\
+                            Original text in {source_lang}: {zipped_prompts[1][0]}\n\
+                            Translation into {target_lang}: {zipped_prompts[1][1]}\n\
+                            Original text in {source_lang}: {zipped_prompts[2][0]}\n\
+                            Translation into {target_lang}: {zipped_prompts[2][1]}\n\
+                            Original text in {source_lang}: {zipped_prompts[3][0]}\n\
+                            Translation into {target_lang}: {zipped_prompts[3][1]}\n\
+                            Original text in {source_lang}: {zipped_prompts[4][0]}\n\
+                            Translation into {target_lang}: {zipped_prompts[4][1]}\n\
+                            Original text in {source_lang}: {source_text}\n\
+                            Translation into {target_lang}:"""
 
             print(promptline)
 

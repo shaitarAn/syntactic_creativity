@@ -11,7 +11,7 @@
 # GPT-4 for all
 
 level="para" # {para, sent}
-model="gpt-3.5-turbo-0125" # {gpt-4, gpt-3.5-turbo-16k}
+model="gpt-4" # {gpt-4, gpt-3.5-turbo-16k}
 
 # if model is gpt-4, then set m to gpt4, else set it to gpt3
 if [ "$model" = "gpt-4" ]; then
