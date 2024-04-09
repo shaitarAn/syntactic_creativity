@@ -97,42 +97,57 @@ def extract_alignments(paragraph1, paragraph2):
 
 final_scores = []
 
-inputdir = "../dataprep/par3/de/"
-output_file = "par3_de_xwr.csv"
+inputdir = "../dataprep/par3/"
+output_file = "../results/par3_xwr.csv"
 
 with open(output_file, "w") as outf:
     writer = csv.writer(outf, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-    writer.writerow(["tgt", "book", "GT", "human1", "human2", "human3"])
+    writer.writerow(["source_lang", "book", "GT", "human1", "human2", "human3", "human4"])
 
-    for infile in os.listdir(inputdir):
-        inputfile = os.path.join(inputdir, infile)
-        book = os.path.basename(infile).replace(".csv", "")    
+    for subdir in os.listdir(inputdir):
+        lang = subdir
+        for infile in os.listdir(os.path.join(inputdir, subdir)):
+            print(infile)
+            inputfile = os.path.join(inputdir, subdir, infile)
+            book = os.path.basename(infile).replace(".csv", "")    
 
-        with open(inputfile, "r") as inf:
+            with open(inputfile, "r") as inf:
 
-            reader = csv.reader(inf, delimiter=',', quotechar='"')
-            next(reader)
-            
-            for row in reader:
-                try:
+                reader = csv.reader(inf, delimiter=',', quotechar='"')
+                next(reader)
                 
-                    gtalignment, gtcross_pairs = extract_alignments(row[0], row[1])
-                    gt_xwr = len(gtcross_pairs)/len(gtalignment)
-                    h1alignment, h1cross_pairs = extract_alignments(row[0], row[2])
-                    h1_xwr = len(h1cross_pairs)/len(h1alignment)
+                for row in reader:
                     try:
-                        h2alignment, h2cross_pairs = extract_alignments(row[0], row[3])
-                        h2_xwr = len(h2cross_pairs)/len(h2alignment)
-                    except:
-                        h2_xwr = None 
-                    try:                       
-                        h3alignment, h3cross_pairs = extract_alignments(row[0], row[4])
-                        h3_xwr = len(h3cross_pairs)/len(h3alignment)
-                    except:
-                        h3_xwr = None
-                    writer.writerow(["de", book, gt_xwr, h1_xwr, h2_xwr, h3_xwr])
                     
-                except:
-                    print("Could not perform alignment with SimAlign")
-                    print(row)
-                    print()
+                        gtalignment, gtcross_pairs = extract_alignments(row[0], row[1])
+                        gt_xwr = len(gtcross_pairs)/len(gtalignment)
+                        try:
+                            h1alignment, h1cross_pairs = extract_alignments(row[0], row[2])
+                            h1_xwr = len(h1cross_pairs)/len(h1alignment)
+                        except:
+                            h1_xwr = None
+
+                        try:
+                            h2alignment, h2cross_pairs = extract_alignments(row[0], row[3])
+                            h2_xwr = len(h2cross_pairs)/len(h2alignment)
+                        except:
+                            h2_xwr = None 
+
+                        try:                       
+                            h3alignment, h3cross_pairs = extract_alignments(row[0], row[4])
+                            h3_xwr = len(h3cross_pairs)/len(h3alignment)
+                        except:
+                            h3_xwr = None
+                            
+                        try:                       
+                            h4alignment, h4cross_pairs = extract_alignments(row[0], row[5])
+                            h4_xwr = len(h4cross_pairs)/len(h4alignment)
+                        except:
+                            h4_xwr = None
+                        writer.writerow([lang, book, gt_xwr, h1_xwr, h2_xwr, h3_xwr, h4_xwr])
+                        
+                    except:
+                        print("Could not perform alignment with SimAlign")
+                        print(lang, book)
+                        print(row)
+                        print()
