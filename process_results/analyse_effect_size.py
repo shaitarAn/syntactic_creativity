@@ -4,7 +4,7 @@ import numpy as np
 import seaborn as sns
 
 # Load data
-df = pd.read_csv('../results/cohen_d_effect_size.csv')
+df = pd.read_csv('../few-shot/results/cohen_d_effect_size.csv')
 
 # Define color schemes for different languages with pastel colors
 shared_colors = {
@@ -55,7 +55,7 @@ plt.legend(title='System')
 plt.xticks(rotation=45)
 
 # Save as a PDF
-plt.savefig('../viz/cohen_sys_distribution.pdf')
+plt.savefig('../viz/few-shot_cohen_sys_distribution.pdf')
 
 # Show plot
 plt.show()
@@ -83,7 +83,7 @@ plt.legend(title='System')
 plt.xticks(rotation=45)
 
 # Save as a PDF
-plt.savefig('../viz/cohen_sys_distribution_japanese.pdf')
+plt.savefig('../viz/few-shot_cohen_sys_distribution_japanese.pdf')
 
 # Show plot
 plt.show()
@@ -103,7 +103,7 @@ plt.ylabel('Percentage')
 plt.legend(title='Level')
 plt.xticks(rotation=45)
 # save as a pdf
-plt.savefig('../viz/cohen_level_distribution.pdf')
+plt.savefig('../viz/few-shot_cohen_level_distribution.pdf')
 # plt.show()
 plt.close()
 
@@ -123,9 +123,9 @@ plt.legend(loc='center', bbox_to_anchor=(1.15, 0.5))
 plt.xticks(rotation=45)
 plt.tight_layout()
 # save as a pdf
-plt.savefig('../viz/cohen_language_distribution.pdf')
+plt.savefig('../viz/few-shot_cohen_language_distribution.pdf')
 # save as a png
-plt.savefig('../viz/cohen_language_distribution.png')
+plt.savefig('../viz/few-shot_cohen_language_distribution.png')
 # plt.show()
 plt.close()
 
@@ -144,7 +144,7 @@ plt.legend(title='Target Language')
 plt.xticks(rotation=45)
 plt.tight_layout()
 # save as a pdf
-plt.savefig('../viz/cohen_target_lang_distribution.pdf')
+plt.savefig('../viz/few-shot_cohen_target_lang_distribution.pdf')
 # plt.show()
 plt.close()
 
@@ -161,7 +161,7 @@ plt.legend(title='Source Language')
 plt.xticks(rotation=45)
 plt.tight_layout()
 # save as a pdf
-plt.savefig('../viz/cohen_source_lang_distribution.pdf')
+plt.savefig('../viz/few-shot_cohen_source_lang_distribution.pdf')
 # plt.show()
 plt.close()
 
@@ -219,9 +219,9 @@ plt.grid(axis='y', zorder=0)  # Add grid
 plt.tight_layout()
 
 # Save figure
-plt.savefig('../viz/cohen_source_lang_level_distribution.pdf')
+plt.savefig('../viz/few-shot_cohen_source_lang_level_distribution.pdf')
 # save as a png
-plt.savefig('../viz/cohen_source_lang_level_distribution.png')
+plt.savefig('../viz/few-shot_cohen_source_lang_level_distribution.png')
 plt.show()
 plt.close()
 
@@ -277,8 +277,8 @@ plt.grid(axis='y', zorder=0)  # Add grid
 plt.tight_layout()
 
 # Save figure
-plt.savefig('../viz/cohen_target_lang_level_distribution.pdf')
+plt.savefig('../viz/few-shot_cohen_target_lang_level_distribution.pdf')
 # save as a png
-plt.savefig('../viz/cohen_target_lang_level_distribution.png')
+plt.savefig('../viz/few-shot_cohen_target_lang_level_distribution.png')
 plt.show()
 plt.close()

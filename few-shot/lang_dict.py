@@ -12,3 +12,4 @@ lang_dict = {
     "cs": "Czech"
     # Add more languages as needed
 }
+
