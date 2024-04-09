@@ -2,30 +2,21 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Path to your CSV file
-csv_file = "../analysis/xwr_par3_en-de.csv"
+csv_file = "../analysis/par3_de_xwr.csv"
 print(csv_file)
 
-# Read the CSV file into a pandas DataFrame
+# group by the column "book" and plot columns GT,human1,human2,human3 if human3 is present
 df = pd.read_csv(csv_file)
-df.dropna()
 
-# Plot boxplots for each column in the DataFrame
-plt.figure(figsize=(10, 6))  # Set the figure size (width, height)
+df_grouped = df.groupby("book")
 
-# Customize boxplot appearance
-boxprops = dict(linewidth=2, color='blue')  # Customize box properties
-medianprops = dict(linewidth=2, color='red')  # Customize median properties
+# for each book create a boxplot of the columns GT,human1,human2 and human3 if present
+for name, group in df_grouped:
+    print(name)
+    print(group)
+    group.boxplot(column=["GT", "human1", "human2", "human3"])
+    plt.title(name)
+    plt.show()
 
-# Create boxplot
-df.boxplot(column=df.columns.tolist(),  # Plot all columns
-           boxprops=boxprops,  # Customize box properties
-           medianprops=medianprops)  # Customize median properties
+    
 
-# Set plot labels and title
-plt.xlabel('Methods')  # X-axis label
-plt.ylabel('Performance')  # Y-axis label
-plt.title('Performance Comparison')  # Plot title
-
-# Show plot
-plt.show()
-plt.close()
