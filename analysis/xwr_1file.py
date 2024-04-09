@@ -97,30 +97,42 @@ def extract_alignments(paragraph1, paragraph2):
 
 final_scores = []
 
-inputfile = "../dataprep/par3/de/death_in_venice.csv"
-output_file = "xwr_par3_en-de.csv"
+inputdir = "../dataprep/par3/de/"
+output_file = "par3_de_xwr.csv"
 
-with open(inputfile, "r") as inf, open(output_file, "w") as outf:
-
-    reader = csv.reader(inf, delimiter=',', quotechar='"')
-    next(reader)
+with open(output_file, "w") as outf:
     writer = csv.writer(outf, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-    writer.writerow(["GT", "human1", "human2", "human3"])
-    
-    for row in reader:
-        try:
-           
-            gtalignment, gtcross_pairs = extract_alignments(row[0], row[1])
-            gt_xwr = len(gtcross_pairs)/len(gtalignment)
-            h1alignment, h1cross_pairs = extract_alignments(row[0], row[2])
-            h1_xwr = len(h1cross_pairs)/len(h1alignment)
-            h2alignment, h2cross_pairs = extract_alignments(row[0], row[3])
-            h2_xwr = len(h2cross_pairs)/len(h2alignment) 
-            h3alignment, h3cross_pairs = extract_alignments(row[0], row[4])
-            h3_xwr = len(h3cross_pairs)/len(h3alignment)
-            writer.writerow([gt_xwr, h1_xwr, h2_xwr, h3_xwr])
+    writer.writerow(["tgt", "book", "GT", "human1", "human2", "human3"])
+
+    for infile in os.listdir(inputdir):
+        inputfile = os.path.join(inputdir, infile)
+        book = os.path.basename(infile).replace(".csv", "")    
+
+        with open(inputfile, "r") as inf:
+
+            reader = csv.reader(inf, delimiter=',', quotechar='"')
+            next(reader)
             
-        except:
-            print("Could not perform alignment with SimAlign")
-            print(row)
-            print()
+            for row in reader:
+                try:
+                
+                    gtalignment, gtcross_pairs = extract_alignments(row[0], row[1])
+                    gt_xwr = len(gtcross_pairs)/len(gtalignment)
+                    h1alignment, h1cross_pairs = extract_alignments(row[0], row[2])
+                    h1_xwr = len(h1cross_pairs)/len(h1alignment)
+                    try:
+                        h2alignment, h2cross_pairs = extract_alignments(row[0], row[3])
+                        h2_xwr = len(h2cross_pairs)/len(h2alignment)
+                    except:
+                        h2_xwr = None 
+                    try:                       
+                        h3alignment, h3cross_pairs = extract_alignments(row[0], row[4])
+                        h3_xwr = len(h3cross_pairs)/len(h3alignment)
+                    except:
+                        h3_xwr = None
+                    writer.writerow(["de", book, gt_xwr, h1_xwr, h2_xwr, h3_xwr])
+                    
+                except:
+                    print("Could not perform alignment with SimAlign")
+                    print(row)
+                    print()
