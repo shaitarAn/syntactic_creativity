@@ -31,3 +31,4 @@ with open("promptlines.json", "r") as f:
     print(promptlines)
 
 
+print("*" * 50)
