@@ -42,18 +42,13 @@ frequency_penalty = int(args.frequency_penalty)
 level = args.level
 task = args.task
 
+level_dict = {"para": "paragraph", "sent": "sentence"}
 prompts = pd.read_csv(prompt_file, sep="\t", encoding="utf-8")
 # select rows where column "code" is equal to source_lang-target_lang
 prompts = prompts.loc[prompts['code'] == f"{args.source_lang}-{args.target_lang}"]
-print(prompts)
 
 # zip the columns "source" and "target" into a list of tuples
 zipped_prompts = list(zip(prompts["source"], prompts["target"]))
-
-for item in zipped_prompts:
-    print(item)
-    print("\n")
-
 
 startCount = int(args.count)
 
@@ -80,6 +75,9 @@ def call_openai(data):
 
   return response
 
+asmachine_system_prompt = f"You are a machine translation system that translates {level_dict[level]}s from {source_lang} to {target_lang}. You provide only the translation itself, with no additional comments."
+ashuman_system_prompt = f"You are a native  {target_lang} speaker and a professional translator that translates {level_dict[level]}s from {source_lang} to {target_lang}. You provide only the translation itself, with no additional comments."
+
 
 try:
     # open json file
@@ -90,6 +88,7 @@ try:
         count = startCount
 
         for line in inf:
+            print("\n", "*" * 50)
             source_text = json.loads(line)["source"]
             if source_text == "":
                 continue
@@ -108,11 +107,11 @@ try:
                             Original text in {source_lang}: {source_text}\n\
                             Translation into {target_lang}:"""
 
-            print(promptline)
+            # print(promptline)
 
             prompt =[{
                 "role": "system",
-                "content": ""
+                "content": asmachine_system_prompt,
                 },{
                 "role": "user",
                 "content": promptline
@@ -136,10 +135,11 @@ try:
                 result = response.json()
 
                 raw_output = result["choices"][0]["message"]["content"]
-                # print(raw_output)
-                writer.writerow([count, source_text, raw_output.strip().replace("\n", " ")])
+                print(count, raw_output)
+                raw_output = raw_output.split("\n")[0].strip()
+                writer.writerow([count, source_text, raw_output])
             else:
-                print(count, source_text, "<ERROR>")
+                print(count, "<ERROR>")
                 print("Re-translating...")
                 
                 # Revert file pointer to the previous position to resend the same text for translation
@@ -148,8 +148,9 @@ try:
                 if response_new.status_code == 200:
                     result_new = response_new.json()
                     raw_output_new = result_new["choices"][0]["message"]["content"]
-                    print(raw_output_new)
-                    writer.writerow([count, source_text, raw_output_new.strip().replace("\n", " ")])
+                    print(count, raw_output_new)
+                    raw_output_new = raw_output_new.split("\n")[0].strip()
+                    writer.writerow([count, source_text, raw_output_new.strip()])
                 else:
                     print(count, source_text, "<ERROR>")
                     writer.writerow([count, source_text, "<ERROR>"])
