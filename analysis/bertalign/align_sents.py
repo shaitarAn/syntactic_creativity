@@ -16,15 +16,17 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '2'
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--level", "-l", type=str, required=True, help='provide "sent" or "para"')
+parser.add_argument("--output_dir", "-o", type=str, required=True)
 args = parser.parse_args()
 
 level = args.level
+output_dir = args.output_dir
 
 languages = set()
 
 input_dir = f'../../inputs/target_sent_json_{level}-level'
 
-output_dir = f"../../output/aligned_sentences_{level}"
+output_dir = f"../{output_dir}/output/aligned_sentences_{level}"
 os.makedirs(output_dir, exist_ok=True)
 
 for file in os.listdir(input_dir):
@@ -123,7 +125,7 @@ for lang in languages:
         except Exception as e:
             print(e)
 
-with open(f"../../results/{level}_n2m_scores.csv", "w") as outf:
+with open(f"${output_dir}/results/{level}_n2m_scores.csv", "w") as outf:
     writer = csv.writer(outf)
     writer.writerow(["lang", "system", "total_src_sents", "n2m", "n2mR", "length_var", "merges", "splits", "mergesRatio", "splitsRatio"])
     for score in final_scores:
