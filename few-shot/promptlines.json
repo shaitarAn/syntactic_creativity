@@ -1,0 +1,30 @@
+{
+    "InstructPromptline": {
+      "name": "inst5",
+      "promptline": "I train you to translate with 5 examples. 1. I give you a {source_lang} {level}: {zipped_shots[0][0]} You return a {target_lang} {level}: {zipped_shots[0][1]} 2. I give you a {source_lang} {level}: {zipped_shots[1][0]} You return a {target_lang} {level}: {zipped_shots[1][1]} 3. I give you a {source_lang} {level}: {zipped_shots[2][0]} You return a {target_lang} {level}: {zipped_shots[2][1]} 4. I give you a {source_lang} {level}: {zipped_shots[3][0]} You return a {target_lang} {level}: {zipped_shots[3][1]} 5. I give you a {source_lang} {level}: {zipped_shots[4][0]} You return a {target_lang} {level}: {zipped_shots[4][1]} Now do the work work. I provide you a {source_lang} {level}: {source_text} You return a {target_lang} {level}:"
+    },
+    "KarpinskaPromptline": {
+        "name": "karp5",
+        "promptline": "Original text in {source_lang}: {zipped_shots[0][0]} Translation into {target_lang}: {zipped_shots[0][1]} Original text in {source_lang}: {zipped_shots[1][0]} Translation into {target_lang}: {zipped_shots[1][1]} Original text in {source_lang}: {zipped_shots[2][0]} Translation into {target_lang}: {zipped_shots[2][1]} Original text in {source_lang}: {zipped_shots[3][0]} Translation into {target_lang}: {zipped_shots[3][1]} Original text in {source_lang}: {zipped_shots[4][0]} Translation into {target_lang}: {zipped_shots[4][1]} Original text in {source_lang}: {source_text} Translation into {target_lang}:"
+      },
+      "KarpinskaOneshot": {
+        "name": "karp1",
+        "promptline": "Original text in {source_lang}: {zipped_shots[0][0]} Translation into {target_lang}: {zipped_shots[0][1]} Original text in {source_lang}: {source_text} Translation into {target_lang}:"
+      },
+      "InstructOneshot": {
+        "name": "inst1",
+        "promptline": "I train you to translate with 1 example. I give you a {source_lang} {level}: {zipped_shots[0][0]} You return a {target_lang} {level}: {zipped_shots[0][1]} Now do the work work. I provide you a {source_lang} {level}: {source_text} You return a {target_lang} {level}:"
+      },
+      "MachineOneshot": {
+        "name": "mach1",
+        "promptline": "Follow the instructions to translate a text. I give you a {source_lang} {level}: {zipped_shots[0][0]} You return a {target_lang} {level}: {zipped_shots[0][1]} Now do the work. I provide you a {source_lang} {level}: {source_text} You return a {target_lang} {level}:"
+      },
+      "HumanOneshot": {
+        "name": "hum1",
+        "promptline": "Here is an example translation from {source_lang} to {target_lang}. {source_lang} {level}: {zipped_shots[0][0]} {target_lang} {level}: {zipped_shots[0][1]} Here is a new {source_lang} {level}: {source_text} Please translate it into {target_lang}:"
+      },
+      "HTMLOneshot": {
+        "name": "html1",
+        "promptline": "Translate a text into {target_lang} and format it as an HTML paragraph. For example, you receive a {source_lang} {level}: {zipped_shots[0][0]} You return a {target_lang} {level} like this: <p> {zipped_shots[0][1]} </p> Now a real task. Here is a {source_lang} {level}: {source_text} Return a {target_lang} {level} as an HTML paragraph within the <p></p>."
+      }
+}
