@@ -35,7 +35,7 @@ for promptline_type in ['InstructPromptline', 'KarpinskaPromptline','KarpinskaOn
         input_json = os.path.join(input_dir, filename)
         
         outputfilename = os.path.basename(filename)
-        outputfilename = ".".join(outputfilename.split(".")[:-2]) + f".llama2.{prompttype}.csv"
+        outputfilename = ".".join(outputfilename.split(".")[:-2]) + f".llama2.{prompttype}.nq.csv"
         output_csv = os.path.join(output_dir, outputfilename)
 
         count = 0

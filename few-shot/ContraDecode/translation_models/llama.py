@@ -20,7 +20,7 @@ class LLaMaTranslationModel(TranslationModel):
                  ):
         super().__init__()
         self.model_name_or_path = model_name_or_path
-        self.model = AutoModelForCausalLM.from_pretrained(model_name_or_path, device_map='auto', load_in_4bit=True, torch_dtype=torch.bfloat16)
+        self.model = AutoModelForCausalLM.from_pretrained(model_name_or_path, device_map='auto', load_in_4bit=False, torch_dtype=torch.bfloat16)
         self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
         self.pipeline = pipeline('text-generation', model=self.model, tokenizer=self.tokenizer)
         self.message_template = message_template
