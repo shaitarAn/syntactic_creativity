@@ -1,6 +1,6 @@
 #!/bin/bash
 
-inputdir="translated/sent-level"
+inputdir="translated/sent-level/asmachine"
 outputdir="inputs/sents"
 mkdir -p $outputdir
 

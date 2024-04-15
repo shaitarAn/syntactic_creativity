@@ -26,12 +26,14 @@ parser.add_argument('-l', '--level', required=True, help='paragraph-level or sen
 parser.add_argument('-t', '--task', required=False, help='write or append to file (default: write).', default='w')
 parser.add_argument('-c', '--count', required=True, help='start counting lines from this number (default: 0).', default=0)
 parser.add_argument('-p', '--prompt_file', required=False, help='the file containing the prompts for the translation (default: prompt_demonstrations.tsv).', default='prompt_demonstrations.tsv')
+parser.add_argument('-pt', '--prompttype', required=False, default='asmachine')
 
 args = parser.parse_args()
 
 infile = args.infile
 prompt_file = args.prompt_file
 output_dir = args.output_dir
+promptype = args.prompttype
 
 source_lang = lang_dict[args.source_lang]
 target_lang = lang_dict[args.target_lang]
@@ -75,8 +77,10 @@ def call_openai(data):
 
   return response
 
-asmachine_system_prompt = f"You are a machine translation system that translates {level_dict[level]}s from {source_lang} to {target_lang}. You provide only the translation itself, with no additional comments."
-ashuman_system_prompt = f"You are a native  {target_lang} speaker and a professional translator that translates {level_dict[level]}s from {source_lang} to {target_lang}. You provide only the translation itself, with no additional comments."
+if promptype == "asmachine":
+    system_prompt = f"You are a machine translation system that translates {level_dict[level]}s from {source_lang} to {target_lang}. You provide only the translation itself, with no additional comments."
+else:
+    system_prompt = f"You are a native  {target_lang} speaker and a professional translator that translates {level_dict[level]}s from {source_lang} to {target_lang}. You provide only the translation itself, with no additional comments."
 
 
 try:
@@ -111,7 +115,7 @@ try:
 
             prompt =[{
                 "role": "system",
-                "content": asmachine_system_prompt,
+                "content": system_prompt,
                 },{
                 "role": "user",
                 "content": promptline

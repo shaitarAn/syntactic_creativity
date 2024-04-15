@@ -10,8 +10,9 @@
 # GPT-3 for de-en_news and en-de_news
 # GPT-4 for all
 
-level="para" # {para, sent}
+# level="para" # {para, sent}
 model="gpt-4" # {gpt-4, gpt-3.5-turbo-16k}
+prompttype="ashuman"
 
 for level in "para" "sent"; do
 
@@ -22,7 +23,7 @@ for level in "para" "sent"; do
         m="gpt3"
     fi
 
-    OUTDIR=translated/${level}-level/asmachine
+    OUTDIR=translated/${level}-level/${prompttype}
 
     mkdir -p $OUTDIR
 
@@ -67,6 +68,7 @@ for level in "para" "sent"; do
                 -sl ${srcL} \
                 -tl ${tgtL} \
                 -p $prompts_file \
+                -pt $prompttype \
                 -o $OUTDIR \
                 -m ${model} \
                 -l ${level} \

@@ -144,5 +144,8 @@ grouped_sens = align_sents_and_parasrc(parasrc, sentfile)
 # write the merged paragraphs to a file
 nameparts = os.path.basename(sentfile).split(".")
 output = ".".join(nameparts[0:3]) + ".merged.csv"
+output = output.replace("gpt3", "gpt3mch")
+print(output)
+output = output.replace("gpt4", "gpt4mch")
 output = os.path.join(outputdir, output)
 write_to_file(output, grouped_sens)
