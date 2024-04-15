@@ -46,12 +46,64 @@ def main():
     count_detected_translations_df.to_csv(output_file, index=False)
 
     # visualize the result with a bar plot in a blue gradient
-    count_detected_translations_df.plot(kind='bar', x='langs', stacked=False, colormap='RdYlGn_r', figsize=(10, 6))
+    count_detected_translations_df.plot(kind='bar', x='langs', stacked=False, colormap='RdYlGn', figsize=(10, 6))
 
+    # move the legend to the upper left corner
+    plt.legend(loc='lower right', fancybox=True, shadow=True, ncol=1)
+    
     plt.show()
+
+    # calculate the average of the inst1 and other columns
+    avg_inst1 = count_detected_translations_df['inst1'].mean()
+    avg_karp1 = count_detected_translations_df['karp1'].mean()
+    avg_hum1 = count_detected_translations_df['hum1'].mean()
+    avg_mach1 = count_detected_translations_df['mach1'].mean()
+    avg_html1 = count_detected_translations_df['html1'].mean()
+    avg_inst5 = count_detected_translations_df['inst5'].mean()
+    avg_karp5 = count_detected_translations_df['karp5'].mean()
+
+    # create a new DataFrame with the averages
+    avg_df = pd.DataFrame({'inst1': avg_inst1, 'inst5': avg_inst5, 'karp1': avg_karp1, 'karp5': avg_karp5, 'hum1': avg_hum1, 'mach1': avg_mach1, 'html1': avg_html1}, index=[0])
+
+    # visualize the average with a bar plot in a blue gradient
+    ax = avg_df.plot(kind='bar', stacked=False, colormap='RdYlGn', figsize=(10, 6))
+
+    # draw a black border around the bars
+    for spine in ax.spines.values():
+        spine.set_edgecolor('black')
+    
+    # Annotate each bar with its value
+    for p in ax.patches:
+        ax.annotate(f'{p.get_height():.2f}', 
+                    (p.get_x() + p.get_width() / 2., p.get_height()), 
+                    ha='center', va='center', 
+                    xytext=(0, 10), 
+                    textcoords='offset points')
+    
+    # Add a title and labels
+    # plt.title('Average number of detected translations')
+    plt.xlabel('Prompt types')
+    plt.ylabel('Average number of detected translations')
+
+    # add black line around the bars
+    plt.gca().spines['top'].set_color('black')
+
+    # display the bars starting at 6 on the y-axis
+    plt.ylim(8, 10)
+
+    # Display the plot
+    plt.show()
+
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     main()
 
 
-
+# iterate over each file in the specified directory

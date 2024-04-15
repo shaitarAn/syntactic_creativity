@@ -34,7 +34,7 @@ combined_table$Level <- factor(
 
 # order the levels of 'system' with "human" first
 combined_table$system <- factor(
-  combined_table$system, levels = c("human", "gpt3", "gpt4", "nmt")
+  combined_table$system, levels = c("human", "gpt3hum", "gpt3mch", "gpt4hum", "gpt4mch")
 )
 
 # select only the necessary columns in the combined table
@@ -68,7 +68,7 @@ calculate_cohens_d <- function(lang_df) {
   human_observation <- paragraph_data[paragraph_data$system == "human", ]$xwr_observations
   
   # Loop through each system at both paragraph and sentence levels
-  systems <- unique(c("gpt3", "gpt4", "nmt"))
+  systems <- unique(c("gpt3hum", "gpt3mch", "gpt4hum", "gpt4mch"))
   for (sys in systems) {
     # Check if there is data available for the system at paragraph level
     if (any(paragraph_data$system == sys)) {
@@ -134,7 +134,7 @@ calculate_t_test <- function(lang_df) {
   sample1_n <- paragraph_data[paragraph_data$system == "human", ]$xwr_observations
   
   # Loop through each system at both paragraph and sentence levels
-  systems <- unique(c("gpt3", "gpt4", "nmt"))
+  systems <- unique(c("gpt3hum", "gpt3mch", "gpt4hum", "gpt4mch"))
   for (sys in systems) {
     # Check if there is data available for the system at paragraph level
     if (any(paragraph_data$system == sys)) {
@@ -206,14 +206,14 @@ for (lang_df in list_df) {
 print(results_df)
 
 # Save the results dataframe to a CSV file
-write.csv(results_df, file = "../few-shot/results/cohen_d_effect_size.csv", row.names = FALSE)
+write.csv(results_df, file = "../few-shot/results/cohen_d_effect_size_humch.csv", row.names = FALSE)
 
 # Plot the effect size results
 ggplot(results_df, aes(x = System, y = Cohen_d, fill = Level)) +
   geom_bar(stat = "identity", position = "dodge") +
   facet_wrap(~Language, scales = "free") +
   theme_minimal() +
-  theme(axis.text.x = element_text(hjust = 0.5)) +
+  theme(axis.text.x = element_text(hjust = 0.5, angle = 45)) +
   labs(title = "Cohen's d Effect Size with Hedge's g Correction for Systems' XWR as Compared to Human Values",
        x = NULL,
        y = NULL,
@@ -232,7 +232,7 @@ ggplot(results_df, aes(x = System, y = Cohen_d, fill = Level)) +
 
 
 # Save the plot to a file
-ggsave("../viz/few-shot_cohen_d_effect_size.pdf", width = 12, height = 8, units = "in")
+ggsave("../viz/few-shot_cohen_d_effect_size_humch.pdf", width = 12, height = 8, units = "in")
 
 # Perform t-test for each language
 for (lang_df in list_df) {
@@ -243,7 +243,7 @@ for (lang_df in list_df) {
 print(t_test_results_df)
 
 # Save the results dataframe to a CSV file
-write.csv(t_test_results_df, file = "../few-shot/results/t_test_results.csv", row.names = FALSE)
+write.csv(t_test_results_df, file = "../few-shot/results/t_test_results_humch.csv", row.names = FALSE)
 
 # Plot the t-test results
 ggplot(t_test_results_df, aes(x = System, y = t_statistic, fill = Level)) +
@@ -268,7 +268,7 @@ ggplot(t_test_results_df, aes(x = System, y = t_statistic, fill = Level)) +
   theme(legend.background = element_rect(fill = "white", colour = "white"))
 
 # Save the plot to a file
-ggsave("../viz/t_test_results.pdf", width = 12, height = 8, units = "in")
+ggsave("../viz/t_test_results_humch.pdf", width = 12, height = 8, units = "in")
 
 # Plot the p-values
 ggplot(t_test_results_df, aes(x = System, y = p_value, fill = Level)) +
@@ -294,7 +294,7 @@ ggplot(t_test_results_df, aes(x = System, y = p_value, fill = Level)) +
   theme(legend.background = element_rect(fill = "white", colour = "white"))
 
 # Save the plot to a file
-ggsave("../viz/few-shot_p_value_results.pdf", width = 12, height = 8, units = "in")
+ggsave("../viz/few-shot_p_value_results_humch.pdf", width = 12, height = 8, units = "in")
 
 # close device
 dev.off()
