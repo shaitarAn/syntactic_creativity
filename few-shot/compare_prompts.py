@@ -36,8 +36,8 @@ def count_detected_translations(input_dir):
     return result_df
 
 def main():
-    input_dir = 'test_outputs_all_langs'  # Specify the directory containing CSV files
-    output_file = 'detected_translations_summary.csv'  # Output CSV filename
+    input_dir = 'test_outputs'  # Specify the directory containing CSV files
+    output_file = 'detected_translations_summary_problem_langs.csv'  # Output CSV filename
 
     # Count the number of "DETECTED" translations in each CSV file
     count_detected_translations_df = count_detected_translations(input_dir)
@@ -49,7 +49,7 @@ def main():
     count_detected_translations_df.plot(kind='bar', x='langs', stacked=False, colormap='RdYlGn', figsize=(10, 6))
 
     # move the legend to the upper left corner
-    plt.legend(loc='lower right', fancybox=True, shadow=True, ncol=1)
+    plt.legend(loc='lower right', fancybox=True, shadow=True, ncol=1, title='Prompt types')
     # add a title
     plt.title('Ability of Llama to produce target language. Yes quantization.')
     # remove the x-axis label
@@ -57,7 +57,7 @@ def main():
     # add a y-axis label
     plt.ylabel('Number of detected translations')
     # save the plot as a PNG file
-    plt.savefig('detected_translations_llama_q.png', bbox_inches='tight')
+    plt.savefig('detected_translations_llama_nq.png', bbox_inches='tight')
     
     plt.show()
 
@@ -100,7 +100,7 @@ def main():
     plt.ylim(8, 10)
 
     # save the plot as a PNG file
-    plt.savefig
+    plt.savefig('avg_detected_translations_nq.png', bbox_inches='tight')
 
     # Display the plot
     plt.show()
