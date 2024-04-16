@@ -1,0 +1,9 @@
+Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:12,  2.43s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:04<00:09,  2.42s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:07<00:07,  2.41s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:09<00:04,  2.43s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:12<00:02,  2.46s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:13<00:00,  2.13s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:13<00:00,  2.31s/it]
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+/home/ashait/data/conda/envs/ml_llm/lib/python3.10/site-packages/transformers/generation/utils.py:1421: UserWarning: You have modified the pretrained model configuration to control generation. This is a deprecated strategy to control generation and will be removed soon, in a future version. Please use and modify the model generation configuration (see https://huggingface.co/docs/transformers/generation_strategies#default-text-generation-configuration )
+  warnings.warn(
+Setting `pad_token_id` to `eos_token_id`:32005 for open-end generation.
+<|im_start|>user
+Translate the following text from Japanese into English.\Japanese: ミホとサツキは地元で頻繁に会っているせいか、そっくりな表情と喋り方をしている。特にお菓子の食べ方が似ていて、二人ともネイルを施した手でクッキーを小さく割りながら口に運んでいる。前からそうだったろうか、と思いだそうとするが、記憶が曖昧だ。前に会ったときの二人の小さな癖や仕草は、もうどこかへ流れ出て行ってしまったのかもしれないとも思う.
+English:<|im_end|>
+Miho and Satsuki often meet in their hometown, and they have similar expressions and speech patterns. They both eat cookies in a similar way, using their nails to cut the cookies into small pieces and then feeding them into their mouths. I thought that was the case before, but my memory is hazy. I wonder if the small habits and gestures of the two when they first met have already disappeared somewhere.

@@ -1,0 +1,10 @@
+Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:12,  2.41s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:04<00:09,  2.41s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:07<00:07,  2.42s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:09<00:04,  2.42s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:12<00:02,  2.41s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:13<00:00,  2.06s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:13<00:00,  2.24s/it]
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+/home/ashait/data/conda/envs/ml_llm/lib/python3.10/site-packages/transformers/generation/utils.py:1421: UserWarning: You have modified the pretrained model configuration to control generation. This is a deprecated strategy to control generation and will be removed soon, in a future version. Please use and modify the model generation configuration (see https://huggingface.co/docs/transformers/generation_strategies#default-text-generation-configuration )
+  warnings.warn(
+Setting `pad_token_id` to `eos_token_id`:32005 for open-end generation.
+<|im_start|>user
+Translate the following text from English into Polish.
+English: The mother was speaking from the breakfast room, out of my field of view. I liked that room a lot, with its long, oaken table and glass walls on three sides. You could see the bright sparkle of the lake through the glass walls, and sunlight shifted through the moving branches of an ancient willow that shaded the house.
+Polish:<|im_end|>
+Mama mówiła z pokoju, w którym się stawał z pokiwnymi, z mojego pola widzenia. Mnie bardzo podobał się ten pokój, z długim, czerwonym stolem i słomianymi ścianami z trzech stron. Z pokoju można było dostrzec jasne, właściwe dla jeziora, wibracje, a słońce przeszywało przez ruchome gałęzie starego wiązu, który oświetlał dom.

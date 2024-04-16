@@ -1,0 +1,10 @@
+Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:  17%|█▋        | 1/6 [00:02<00:12,  2.56s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [00:05<00:10,  2.55s/it]Loading checkpoint shards:  50%|█████     | 3/6 [00:07<00:07,  2.56s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [00:10<00:05,  2.57s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [00:12<00:02,  2.56s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:14<00:00,  2.19s/it]Loading checkpoint shards: 100%|██████████| 6/6 [00:14<00:00,  2.38s/it]
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+/home/ashait/data/conda/envs/ml_llm/lib/python3.10/site-packages/transformers/generation/utils.py:1421: UserWarning: You have modified the pretrained model configuration to control generation. This is a deprecated strategy to control generation and will be removed soon, in a future version. Please use and modify the model generation configuration (see https://huggingface.co/docs/transformers/generation_strategies#default-text-generation-configuration )
+  warnings.warn(
+Setting `pad_token_id` to `eos_token_id`:32005 for open-end generation.
+<|im_start|>user
+Translate the following text from Portuguese into English.
+Portuguese: Um grupo de investigadores lançou um novo modelo para tarefas relacionadas com tradução.
+English:<|im_end|>
+A group of researchers has launched a new model for translation-related tasks.

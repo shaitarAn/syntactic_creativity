@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #SBATCH --cpus-per-task=1
-#SBATCH --gres=gpu:A100:1
+#SBATCH --gres=gpu:A100:2
 #SBATCH --mem=350GB
-#SBATCH --time=00:10:00
+#SBATCH --time=00:30:00
 #SBATCH --partition=lowprio
 
 module purge
