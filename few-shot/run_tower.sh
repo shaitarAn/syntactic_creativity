@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #SBATCH --cpus-per-task=1
-#SBATCH --gres=gpu:A100:4
+#SBATCH --gres=gpu:A100:1
 #SBATCH --mem=350GB
-#SBATCH --time=05:00:00
+#SBATCH --time=00:10:00
 #SBATCH --partition=lowprio
 
 module purge
@@ -14,8 +14,4 @@ export HF_HOME="/scratch/ashait/cache/huggingface"
 export HF_HUB_CACHE="$HF_HOME/hub"
 export HF_ASSETS_CACHE="$HF_HOME/assets"
 
-for level in "para"; do
-    
-    python translate_llama.py -l "para" --test
-
-done
+python test_tower.py
