@@ -7,26 +7,29 @@ from lang_dict import lang_dict
 import os
 import json
 
-
 parser = argparse.ArgumentParser(description='Translate a file from a given source language to a target language with an OpenAI model.')
 parser.add_argument('-l', '--level', required=True, type=str,choices=['para', 'sent'], help='Specify the translation level: paragraph-level or sentence-level')
 parser.add_argument('--test', action='store_true', help='Specify whether it is a test (default: False)')
+parser.add_argument('-r', '--run', required=False, type=str, help='Specify the run')
 
 args = parser.parse_args()
 level = args.level
+run = args.run
 
 input_dir = f"test_inputs" if args.test else f"../inputs/source_{level}_json"
-output_dir = f"test_outputs" if args.test else f"translated_t0.1_5shot_html/{level}-level"
+output_dir = f"test_outputs" if args.test else f"translated/{level}-level"
 os.makedirs(output_dir, exist_ok=True)
 
 level_dict = {"para": "paragraph", "sent": "sentence"}
 llama = LLaMaTranslationModel(model_name_or_path="meta-llama/Llama-2-70b-chat-hf", system_prompt="")
 prompts_file = f"base_data/prompt_demonstrations_{level}.tsv"
 
-for promptline_type in ['InstructPromptline', 'KarpinskaPromptline','KarpinskaOneshot', 'InstructOneshot', 'MachineOneshot', 'HumanOneshot', 'HTMLOneshot']:
+# for promptline_type in ['InstructPromptline', 'KarpinskaPromptline','KarpinskaOneshot', 'InstructOneshot', 'MachineOneshot', 'HumanOneshot', 'HTMLOneshot']:
+
+for promptline_type in ['HTMLOneshot']:
     
     with open("promptlines.json", "r") as f:
-        promptlines = json.load(f)
+        promptlines = json.load(f) 
         prompttype = promptlines[promptline_type]["name"]
 
     for filename in os.listdir(input_dir):
@@ -35,7 +38,7 @@ for promptline_type in ['InstructPromptline', 'KarpinskaPromptline','KarpinskaOn
         input_json = os.path.join(input_dir, filename)
         
         outputfilename = os.path.basename(filename)
-        outputfilename = ".".join(outputfilename.split(".")[:-2]) + f".llama2.{prompttype}.nq.csv"
+        outputfilename = ".".join(outputfilename.split(".")[:-2]) + f".llama2.{prompttype}.{run}.csv"
         output_csv = os.path.join(output_dir, outputfilename)
 
         count = 0

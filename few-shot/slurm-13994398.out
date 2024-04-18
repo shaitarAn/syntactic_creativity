@@ -1,0 +1,68 @@
+Loading checkpoint shards:   0%|          | 0/15 [00:00<?, ?it/s]Loading checkpoint shards:   7%|▋         | 1/15 [00:12<03:00, 12.87s/it]Loading checkpoint shards:  13%|█▎        | 2/15 [00:25<02:48, 12.94s/it]Loading checkpoint shards:  20%|██        | 3/15 [00:39<02:41, 13.49s/it]Loading checkpoint shards:  27%|██▋       | 4/15 [00:53<02:27, 13.38s/it]Loading checkpoint shards:  33%|███▎      | 5/15 [01:06<02:12, 13.29s/it]Loading checkpoint shards:  40%|████      | 6/15 [01:19<01:58, 13.21s/it]Loading checkpoint shards:  47%|████▋     | 7/15 [01:32<01:46, 13.27s/it]Loading checkpoint shards:  53%|█████▎    | 8/15 [01:45<01:32, 13.22s/it]Loading checkpoint shards:  60%|██████    | 9/15 [01:58<01:19, 13.17s/it]Loading checkpoint shards:  67%|██████▋   | 10/15 [02:12<01:05, 13.13s/it]Loading checkpoint shards:  73%|███████▎  | 11/15 [02:25<00:52, 13.17s/it]Loading checkpoint shards:  80%|████████  | 12/15 [02:38<00:39, 13.12s/it]Loading checkpoint shards:  87%|████████▋ | 13/15 [02:51<00:26, 13.10s/it]Loading checkpoint shards:  93%|█████████▎| 14/15 [03:03<00:12, 12.95s/it]Loading checkpoint shards: 100%|██████████| 15/15 [03:04<00:00,  9.20s/it]Loading checkpoint shards: 100%|██████████| 15/15 [03:04<00:00, 12.30s/it]
+fixed input file:  test_inputs/pl-ja.para.source.json
+Source language =  pl
+Target language =  ja
+**************************************************
+  0%|          | 0/1 [00:00<?, ?it/s]/home/ashait/data/conda/envs/ml_llm/lib/python3.10/site-packages/transformers/generation/configuration_utils.py:362: UserWarning: `do_sample` is set to `False`. However, `temperature` is set to `0.1` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.
+  warnings.warn(
+/home/ashait/data/conda/envs/ml_llm/lib/python3.10/site-packages/transformers/generation/configuration_utils.py:367: UserWarning: `do_sample` is set to `False`. However, `top_p` is set to `0.9` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.
+  warnings.warn(
+100%|██████████| 1/1 [00:24<00:00, 24.15s/it]100%|██████████| 1/1 [00:24<00:00, 24.15s/it]
+You are a machine translation system that translates paragraphs from Polish to Japanese. You provide only the translation itself, with no additional comments.
+TRANSLATION:
+['<p> そこから出ることはありません、私は言った、確かに信じています。既に1時間と45分、その場所にいるのに。既に彼に代わってしまった。町民たち、廃墟の中で詰まっているのに、見入っていた。黒い穴に、彼らの目を釘付けにしていた。黄色い帽子をかぶった男は、片足をもう片足に乗り換え、咳を聞き、帽子を取り換えた。</p>']
+
+**************************************************
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:31<00:00, 31.25s/it]100%|██████████| 1/1 [00:31<00:00, 31.25s/it]
+You are a machine translation system that translates paragraphs from Polish to Japanese. You provide only the translation itself, with no additional comments.
+TRANSLATION:
+['<p> まだ少し待っておくんだ、と彼は言った。なんでも、彼らは忘れてしまった。bazyliszekは、彼らの中で、誰かが入ると、そのまま消えてしまう。多くの人々がそこで死んでしまった。何故、それを待つのか？彼らは私たちに、生きていると、彼らの仲間であると言っていた。しかし、彼は死んでいる。確かに、彼は、他の人々と同じように、私たちの前にいた。ただ、彼には、剣しか持っていなかった。 bazyliszkaは、鏡を持たないと、殺すことができない。誰も知っている。</p>']
+
+**************************************************
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:57<00:00, 57.41s/it]100%|██████████| 1/1 [00:57<00:00, 57.41s/it]
+You are a machine translation system that translates paragraphs from Polish to Japanese. You provide only the translation itself, with no additional comments.
+TRANSLATION:
+['<p> Grosza zaoszczędziliście, wójcie dodał pryszczaty. Bo i płacić za bazyliszka nie ma komu. Idźcie tedy spokojnie do dom. A konia i dobytek czarownika my weźmiemy, żal dać przepadać dobru. Ano powiedział rzeźnik. Sielna klacz, a i juki nieźle wypchane. Zajrzyjmy, co w środku. Jakże tak? Coście? Milczcie, wójcie, i nie mieszajcie się, bo guza złapiecie ostrzegł pryszczaty. Sielna klacz powtórzył rzeźnik. Zostaw tego konia w spokoju, kochasiu. Rzeźnik odwrócił się wolno w stronę obcego przybysza, który wyszedł zza załomu muru, zza pleców ludzi, zgromadzonych dookoła wejścia do lochu. </p>', '', "Here's the translation in Japanese:", '', '<p> お金を zaoszczędziliście、wojcie dodał pryszczaty。 bazyliszka を支払うには誰もいないので、安心して帰りましょう。 我々はそのままの馬と道具を取り戻し、善良なものを貸し出すのは惜しいです。 あの方は、壁の裏から出て行った外国人で、人々が集まっている前に、呼び込まれた方です。 私たちは、彼の方を見つけることができました。彼は、彼の所有物を取り戻すことができました。</p>']
+
+**************************************************
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:29<00:00, 29.88s/it]100%|██████████| 1/1 [00:29<00:00, 29.88s/it]
+You are a machine translation system that translates paragraphs from Polish to Japanese. You provide only the translation itself, with no additional comments.
+TRANSLATION:
+['<p>異国人は、けんじるような、たくさんの、かすたんの髪をしていた。茶色のチュニックを着て、高い、乗馬用のブーツを履いていた。そして、武器はなかった。「馬には、また来るように」と繰り返し、嫌味な笑みを浮かべながら。どうしたのか？異国の馬、異国の服、異国の所有物、それでもあなたは、自分の疲れた目をその方向に向け、腹立ちするように手を伸ばすのか？それは、どういうことか？</p>', '', 'Note: Please note that the translation may not be word-for-word, as the grammar and sentence structure may vary between languages.']
+
+**************************************************
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:25<00:00, 25.48s/it]100%|██████████| 1/1 [00:25<00:00, 25.48s/it]
+You are a machine translation system that translates paragraphs from Polish to Japanese. You provide only the translation itself, with no additional comments.
+TRANSLATION:
+['<p>誰かがあなたたちに尋ねた、手を隠さないで、何が起こっているのかを教えてくれ、と思った。何かを持っていないと思われるのは残念です。本当はそのままで、彼らは進んで行った。彼らは二人で、私の方向に進んでいった。私の武器は私に付いている。私はそこに留まっていない、と私は言った。</p>', '', 'Note: Please note that the translation is in a more formal and polite tone, as it is common in Japanese language to use polite language when speaking to someone, especially when communicating in writing.']
+
+**************************************************
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:33<00:00, 33.58s/it]100%|██████████| 1/1 [00:33<00:00, 33.58s/it]
+You are a machine translation system that translates paragraphs from Polish to Japanese. You provide only the translation itself, with no additional comments.
+TRANSLATION:
+['<p>  руиныから出てきた二人の若い女性は、軽やかな、確かな足取りで歩いていた。群集はたちまちに開いて、後退し、中央に広がった。両方の女性は笑顔で、歯を見せていた。彼女たちの眼球は、髪の毛の端から耳にかけて広がる、厚い、紫色のタトゥーの帯に沿っていた。肩に掛かっていた皮肉は、視線を避けるようにしていた。両方の腕は、肘から上がり、肩にかかる皮肉の上に横たわっていた。その上には、刃物の柄が突き出ていた。</p>']
+
+**************************************************
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:20<00:00, 20.43s/it]100%|██████████| 1/1 [00:20<00:00, 20.43s/it]
+You are a machine translation system that translates paragraphs from Polish to Japanese. You provide only the translation itself, with no additional comments.
+TRANSLATION:
+['<p> 緩やかに膝を折り、刃を地面に落といた。崩れた廃墟から、石や礫が轟いて、その後、暗闇から手が現れた。傷んだ壁の端に埋まった手を持つ頭、白い、灰色の髪の毛並み、蒼白い顔、剣の柄が肩に突き出ていた。群集は騒然となった。</p>']
+
+**************************************************
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:39<00:00, 39.76s/it]100%|██████████| 1/1 [00:39<00:00, 39.76s/it]
+You are a machine translation system that translates paragraphs from Polish to Japanese. You provide only the translation itself, with no additional comments.
+TRANSLATION:
+['<p>', '白髪の男、自分を抑えることができないまま、不思議な形をした異様な生き物を創り出した。彼の背中には、異常に長い、爬虫のような尻尾があり、その下には、厚い血の液状に染まった破れた壁があった。彼は味方の強い声を上げ、その異様な姿を見て、唖然とした。彼の背中には、異常に長い、爬虫のような尻尾があり、その下には、厚い血の液状に染まった破れた壁があった。彼は味方の強い声を上げ、その異様な姿を見て、唖然とした。</p>', '', 'Note: Please note that the translation is done by a machine and may not be perfect. There may be some nuances or cultural references that are lost in translation.']
+
+**************************************************
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:23<00:00, 23.41s/it]100%|██████████| 1/1 [00:23<00:00, 23.41s/it]
+You are a machine translation system that translates paragraphs from Polish to Japanese. You provide only the translation itself, with no additional comments.
+TRANSLATION:
+['<p>その場所で、白髪の男が言った。「私の二百の羊毛、おまえにください。」彼の言葉に従って、私は羊毛を数え始めた。彼の手には、震えがあった。彼が見ているのは、私の靴に覆われた糞です。彼が見ているのは、私の靴に覆われた糞です。</p>', '', 'Note: Please note that the translation is in a more formal and polite tone, as it is written in a more literary style, which is common in Japanese writing.']
+
+**************************************************
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [06:57<00:00, 417.81s/it]100%|██████████| 1/1 [06:57<00:00, 417.82s/it]
+You are a machine translation system that translates paragraphs from Polish to Japanese. You provide only the translation itself, with no additional comments.
+TRANSLATION:
+['<p> 普通に話したんだ、と私は思った。 Wyjmując trzos z rozdygotanych rąk wójta。我々に対して、あなたたちは私のものを選ぶことになる。私のことを、あなたたちは変えない。私のものを、あなたたちは私に返さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私のことを、あなたたちは私に壊さない。私のことを、あなたたちは私に奪わない。私']
+

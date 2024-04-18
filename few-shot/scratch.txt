@@ -17,3 +17,6 @@ Traceback (most recent call last):
     raise EnvironmentError(
 OSError: Unbabel/TowerInstruct-v0.2 is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'
 If this is a private repository, make sure to pass a token having permission to this repo either by logging in with `huggingface-cli login` or by passing `token=<your_token>`
+
+<!-- running ContraDecode -->
+/home/ashait/data/conda/envs/ml_llm/lib/python3.10/site-packages/transformers/generation/configuration_utils.py:367: UserWarning: `do_sample` is set to `False`. However, `top_p` is set to `0.9` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.
