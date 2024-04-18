@@ -8,32 +8,48 @@ def count_detected_translations(input_dir):
 
     # Iterate over each file in the specified directory
     for filename in os.listdir(input_dir):
+        # Check if the file is a CSV file and matches the expected naming convention
         if filename.endswith(".csv"):
-            filepath = os.path.join(input_dir, filename)
+            # filepath = os.path.join(input_dir, filename)
 
-            # Extract the language and prompt name from the filename
-            filename_parts = filename.split('.')
-            if len(filename_parts) < 4:
-                continue  # Skip files that don't match expected naming convention
-            
-            langs = filename_parts[0]  # Extract languages
-            promptname = filename_parts[3]  # Extract promptname
+            # Extract the base name and extension
+            base_name, extension = os.path.splitext(filename)
 
-            # Load the CSV file into a DataFrame
-            try:
-                df = pd.read_csv(filepath)
-            except pd.errors.EmptyDataError:
-                continue  # Skip empty files or files that cannot be read
+            # Initialize a list to store counts for each version
+            counts = []
 
-            # Count the number of "DETECTED" translations
-            count = df['translation'].str.contains('DETECTED').sum()
+            # Iterate over three versions of the same base file
+            for version in range(1, 4):
+                version_filename = f"{base_name}.{version}{extension}"
+                version_filepath = os.path.join(input_dir, version_filename)
 
-            # add the count to the result DataFrame
-            if langs not in result_df['langs'].values:
-                result_df = result_df.append({'langs': langs}, ignore_index=True)
-            result_df.loc[result_df['langs'] == langs, promptname] = 10 - count
+                try:
+                    # Read the CSV file into a DataFrame
+                    df = pd.read_csv(version_filepath)
+
+                    # Count the number of "DETECTED" translations
+                    count = df['translation'].str.contains('DETECTED').sum()
+                    counts.append(count)
+                except (pd.errors.EmptyDataError, FileNotFoundError):
+                    continue  # Skip empty or unreadable files
+
+            if len(counts) == 3:
+                # Calculate the average count across the three versions
+                average_count = sum(counts) / len(counts)
+
+                # Extract language and prompt name from base name
+                parts = base_name.split('.')
+                if len(parts) >= 4:
+                    langs = parts[0]
+                    promptname = parts[3]
+
+                    # Add the average count to the result DataFrame
+                    if langs not in result_df['langs'].values:
+                        result_df = result_df.append({'langs': langs}, ignore_index=True)
+                    result_df.loc[result_df['langs'] == langs, promptname] = 10 - average_count
 
     return result_df
+
 
 def main():
     input_dir = 'test_outputs'  # Specify the directory containing CSV files
