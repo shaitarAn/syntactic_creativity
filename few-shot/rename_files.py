@@ -20,7 +20,7 @@ def rename_files_with_suffix(directory):
             print(f"Renamed: {old_path} -> {new_path}")
 
 # Specify the directory containing the files
-directory = "test_outputs_q_all_langs"
+directory = "translated/sent-level/ashuman"
 
 # Call the function to rename files in the specified directory
 rename_files_with_suffix(directory)

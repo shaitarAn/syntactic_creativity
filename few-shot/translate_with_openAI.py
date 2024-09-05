@@ -27,6 +27,8 @@ parser.add_argument('-t', '--task', required=False, help='write or append to fil
 parser.add_argument('-c', '--count', required=True, help='start counting lines from this number (default: 0).', default=0)
 parser.add_argument('-p', '--prompt_file', required=False, help='the file containing the prompts for the translation (default: prompt_demonstrations.tsv).', default='prompt_demonstrations.tsv')
 parser.add_argument('-pt', '--prompttype', required=False, default='asmachine')
+# add argument for the run name
+parser.add_argument('-run', '--run_name', required=False, help='the name of the run (default: 1).', default="1")
 
 args = parser.parse_args()
 
@@ -43,6 +45,7 @@ frequency_penalty = int(args.frequency_penalty)
 
 level = args.level
 task = args.task
+run = args.run_name
 
 level_dict = {"para": "paragraph", "sent": "sentence"}
 prompts = pd.read_csv(prompt_file, sep="\t", encoding="utf-8")
@@ -61,7 +64,7 @@ elif "gpt-4" in args.mtsystem:
 
 langs_data = os.path.basename(infile).split(".")[0]
 
-output = os.path.join(output_dir, f"{langs_data}.{level}.{mts}.csv")
+output = os.path.join(output_dir, f"{langs_data}.{level}.{mts}.{run}.csv")
 
 headers = {
     'Content-Type': 'application/json',

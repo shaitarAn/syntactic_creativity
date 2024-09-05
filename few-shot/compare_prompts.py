@@ -14,13 +14,18 @@ def count_detected_translations(input_dir):
 
             # Extract the base name and extension
             base_name, extension = os.path.splitext(filename)
+            version = base_name[-1]
+            base_name = base_name[:-1]
+            # print(base_name, extension)
 
             # Initialize a list to store counts for each version
             counts = []
 
             # Iterate over three versions of the same base file
             for version in range(1, 4):
-                version_filename = f"{base_name}.{version}{extension}"
+
+                version_filename = f"{base_name}{version}{extension}"
+                print(version_filename)
                 version_filepath = os.path.join(input_dir, version_filename)
 
                 try:
@@ -53,7 +58,7 @@ def count_detected_translations(input_dir):
 
 def main():
     input_dir = 'test_outputs'  # Specify the directory containing CSV files
-    output_file = 'detected_translations_summary_problem_langs.csv'  # Output CSV filename
+    output_file = 'detected_translations_summary.csv'  # Output CSV filename
 
     # Count the number of "DETECTED" translations in each CSV file
     count_detected_translations_df = count_detected_translations(input_dir)
@@ -67,13 +72,15 @@ def main():
     # move the legend to the upper left corner
     plt.legend(loc='lower right', fancybox=True, shadow=True, ncol=1, title='Prompt types')
     # add a title
-    plt.title('Ability of Llama to produce target language. Yes quantization.')
+    plt.title('Ability of Llama to produce target language with quantization.')
     # remove the x-axis label
     plt.xlabel('')
     # add a y-axis label
     plt.ylabel('Number of detected translations')
+     # display the bars starting at 6 on the y-axis
+    plt.ylim(2, 10.5)
     # save the plot as a PNG file
-    plt.savefig('detected_translations_llama_nq.png', bbox_inches='tight')
+    plt.savefig('detected_translations_llama_q.png', bbox_inches='tight')
     
     plt.show()
 
@@ -113,10 +120,10 @@ def main():
     plt.gca().spines['top'].set_color('black')
 
     # display the bars starting at 6 on the y-axis
-    plt.ylim(8, 10)
+    plt.ylim(8, 9.75)
 
     # save the plot as a PNG file
-    plt.savefig('avg_detected_translations_nq.png', bbox_inches='tight')
+    plt.savefig('avg_detected_translations_q.png', bbox_inches='tight')
 
     # Display the plot
     plt.show()
