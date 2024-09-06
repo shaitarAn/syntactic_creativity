@@ -157,14 +157,18 @@ print(results)
 results.to_csv("../results/par3_d_results.csv", index=False)
 
 # make a plot of the results
-# convert negative values to positive for d1, d2 and d3
-results["d1"] = results["d1"].abs()
-results["d2"] = results["d2"].abs()
-results["d3"] = results["d3"].abs()
+# revert the negative values to positive for d1, d2 and d3 and vice versa to show the direction of the effect
+results["d1"] = results["d1"] * -1
+results["d2"] = results["d2"] * -1
+results["d3"] = results["d3"] * -1
+
+
+# change names of the languages from abbreviations to full names
+results["source_lang"] = results["source_lang"].replace({"de": "German", "fr": "French", "es": "Spanish", "it": "Italian", "nl": "Dutch", "pt": "Portuguese", "pl": "Polish", "ru": "Russian", "tr": "Turkish", "ja": "Japanese", "zh": "Chinese", "hu": "Hungarian", "cs": "Czech", "fa": "Farsi", "no": "Norwegian", "sv": "Swedish", "ta": "Tamil"})
 
 # plot the results
-plt.figure(figsize=(10, 6))
-plt.title("Effect sizes of GT vs human translators")
+plt.figure(figsize=(20, 5))
+# plt.title("Effect sizes of GT vs human translators")
 
 # Define the width of each bar
 bar_width = 0.25
@@ -175,20 +179,53 @@ x2 = results.index
 x3 = results.index + bar_width
 
 # Plot each group of bars
-plt.bar(x1, results["d1"], width=bar_width, color='b', label="human1")
-plt.bar(x2, results["d2"], width=bar_width, color='g', label="human2")
-plt.bar(x3, results["d3"], width=bar_width, color='r', label="human3")
+plt.bar(x1, results["d1"], width=bar_width, color='#91a7c1', label="human1")
+plt.bar(x2, results["d2"], width=bar_width, color='#a5c8a8', label="human2")
+plt.bar(x3, results["d3"], width=bar_width, color='#d3aa83', label="human3")
 
 # add legend
-plt.legend()
+plt.legend(fontsize=25)
+
+# add title
+# plt.title("XWR effect size between GT and human translators in the Par3 dataset")
+x_positions = results.index - bar_width*2
+# add x-axis labels
+plt.xticks(x_positions, results["source_lang"])
 
 # mark 0.2, 0.5 and 0.8 as the thresholds for small, medium and large effect sizes on the y-axis
 plt.axhline(y=0.2, color='r', linestyle='--', label="small")
 plt.axhline(y=0.5, color='r', linestyle='--', label="medium")
 plt.axhline(y=0.8, color='r', linestyle='--', label="large")
 
+# remove y-axis labels and ticks except for the thresholds
+plt.yticks([0.2, 0.5, 0.8], ["0.2", "0.5", "0.8"], fontsize=20, color='#4D4D4D')
+
 # rotate the x-axis labels
 plt.xticks(rotation=45)
+
+# increase the font size for the labels
+plt.xticks(fontsize=25, color='#4D4D4D')
+plt.yticks(fontsize=25, color='#4D4D4D')
+
+# Remove black border
+plt.gca().spines['top'].set_visible(False)
+plt.gca().spines['right'].set_visible(False)
+plt.gca().spines['left'].set_visible(False)
+# change color of spines
+# plt.gca().spines['left'].set_color('#4D4D4D')
+plt.gca().spines['bottom'].set_visible(False)
+
+# add line at y=0
+plt.axhline(y=0, color='#4D4D4D', linewidth=1)
+# Adjust the x-axis limits to remove extra space
+plt.xlim(-0.5, len(results["source_lang"]) - 0.5)
+
+# remove ticks on the x-axis 
+plt.tick_params(axis='x', which='both', bottom=False, top=False)
+
+# save the plot as a PNG file
+plt.savefig('effect_sizes_par3.png', bbox_inches='tight')
+plt.savefig('effect_sizes_par3.pdf', bbox_inches='tight')
 
 plt.show()
 

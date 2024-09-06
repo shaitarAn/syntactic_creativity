@@ -62,22 +62,26 @@ ggplot(combined_data, aes(x = system, y = MeanXWR, fill = Level)) +
     position = position_dodge(width = 0.7), width = 0.25
   ) +  # 95% CI
   scale_fill_manual(
-    values = c("Paragraph" = "#333333", "Sentence" = "#999999")
+    values = c("Paragraph" = "lightblue", "Sentence" = "#999999")
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(hjust = 0.5, size = 25),
-        axis.text.y = element_text(size = 20),
+        axis.text.y = element_text(size = 30),
         legend.position = "right",
         legend.box = "vertical",
-        legend.title = element_text(size = 20),
-        legend.text = element_text(size = 20)) +
-  labs(title = "Mean XWR and STD XWR Scores Across All Languages",
+        legend.title = element_text(size = 30),
+        legend.text = element_text(size = 30),
+        plot.title = element_text(size = 30, hjust = 0.5)  # Change title font size and center it
+  ) +
+  labs(title = "Mean Crossed Word Alignment Scores in 20 Language Pairs",
        x = NULL,
        y = NULL,
        fill = "Level")
-
+  # change title position to top center
 # save the plot to a file
 ggsave("../viz/mean_xwr_combined.pdf", width = 20, height = 10, units = "in")
+# save png
+ggsave("../viz/mean_xwr_combined.png", width = 14, height = 8, units = "in")
 
 
 

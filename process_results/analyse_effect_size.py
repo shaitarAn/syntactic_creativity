@@ -4,7 +4,7 @@ import numpy as np
 import seaborn as sns
 
 # Load data
-df = pd.read_csv('../few-shot/results/cohen_d_effect_size.csv')
+df = pd.read_csv('../few-shot/results/cohen_d_effect_size_humch.csv')
 
 # Define color schemes for different languages with pastel colors
 shared_colors = {

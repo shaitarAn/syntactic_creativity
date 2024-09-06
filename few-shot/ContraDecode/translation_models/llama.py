@@ -79,7 +79,7 @@ class LLaMaTranslationModel(TranslationModel):
                 remove_invalid_values=True,
                 num_beams=num_beams,
                 # Disable sampling
-                do_sample=True,
+                do_sample=False,
                 temperature=0.1,
                 top_p=0.9,
             )
