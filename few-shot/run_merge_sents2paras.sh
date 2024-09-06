@@ -29,10 +29,13 @@ for langs in $langslist; do
     # iterate through the systems
     for system in $systems; do
 
-        parasrc="../inputs/source_para_json/${langs}.para.source.json"
-        sentfile="${inputdir}/${langs}.sent.${system}.csv"
+        for run in "2" "3" "4" "5"; do
 
-        python ../dataprep/merge_sents2paras.py -ps "$parasrc" -sf "$sentfile" -out "$outputdir"
+            parasrc="../inputs/source_para_json/${langs}.para.source.json"
+            sentfile="${inputdir}/${langs}.sent.${system}.${run}.csv"
+
+            python ../dataprep/merge_sents2paras.py -ps "$parasrc" -sf "$sentfile" -out "$outputdir" -r "$run"
+        done
 
     done
 

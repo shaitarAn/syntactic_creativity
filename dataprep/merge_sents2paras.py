@@ -16,12 +16,14 @@ parser = argparse.ArgumentParser(description='Merge the target sentences into pa
 parser.add_argument('-ps', '--parasrc', required=True, help='source file with paragraph segments')  
 parser.add_argument('-sf', '--sentfile', required=True, help='source file with sentence segments')
 parser.add_argument('-out', '--output', required=True, help='output file')
+parser.add_argument('-r', '--run_name', default="1", help='which run' )
 
 args = parser.parse_args()
 
 parasrc = args.parasrc
 sentfile = args.sentfile
 outputdir = args.output
+run = args.run_name
 
 if "_news" in sentfile:
     langs = sentfile.split("_")[0]
@@ -143,7 +145,7 @@ grouped_sens = align_sents_and_parasrc(parasrc, sentfile)
 
 # write the merged paragraphs to a file
 nameparts = os.path.basename(sentfile).split(".")
-output = ".".join(nameparts[0:3]) + ".merged.csv"
+output = ".".join(nameparts[0:3]) + f".merged.{run}.csv"
 output = output.replace("gpt3", "gpt3mch")
 print(output)
 output = output.replace("gpt4", "gpt4mch")

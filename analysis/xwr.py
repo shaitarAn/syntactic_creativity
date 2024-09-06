@@ -119,47 +119,55 @@ def extract_alignments(paragraph1, paragraph2):
 final_scores = []
 
 for file in os.listdir(input_dir):
-    lang = file.split(".")[0]
-    system = file.split(".")[2]
-    file = os.path.join(input_dir, file)
-
-    xwr_list = []
-    all_alignments = 0
-    cross_alignments = 0
-
-    with open(file, "r") as inf, open(f"{inp}/output/alignments_per_file/{lang}.{level}.{system}.alignments.csv", "w") as outf:
-        writer = csv.writer(outf, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow(["id", "source", "translation", "alignments"])
-
-        print(file)
-        reader = csv.reader(inf, delimiter=',', quotechar='"')
-        next(reader)
-        
-        for row in reader:
-            try:
-                
-                alignment, cross_pairs = extract_alignments(row[1], row[2])
-                writer.writerow([row[0], row[1], row[2], alignment])
-
-                xwr_list.append(len(cross_pairs)/len(alignment)) 
-                all_alignments += len(alignment)
-                cross_alignments += len(cross_pairs)
-
-            except:
-                print("Could not perform alignment with SimAlign")
-                print(lang)
-                print(row)
-                print()
-
-    try:
-        xwr_mean = np.mean(xwr_list)
-        xwr_std = np.std(xwr_list)
-        scores = [lang, system, all_alignments, cross_alignments, xwr_mean, xwr_std, len(xwr_list)]
-        final_scores.append(scores)
-        print(scores)
-        print("------------------------------")
-    except ZeroDivisionError:
+    
+    if not file.endswith(".csv"):
         continue
+
+    lang, _, system, version = file.split(".")[:-1]  # Extract components from filename
+    version = int(version)  # Convert version number to integer
+
+    for version in range(1,4):
+
+        file = os.path.join(input_dir, file)
+        outpfa = f"{inp}/output/alignments_per_file/{lang}.{level}.{system}.{version}.alignments.csv"
+
+        xwr_list = []
+        all_alignments = 0
+        cross_alignments = 0
+
+        with open(file, "r") as inf, open(outpfa, "w") as outf:
+            writer = csv.writer(outf, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            writer.writerow(["id", "source", "translation", "alignments"])
+
+            print(file)
+            reader = csv.reader(inf, delimiter=',', quotechar='"')
+            next(reader)
+            
+            for row in reader:
+                try:
+                    
+                    alignment, cross_pairs = extract_alignments(row[1], row[2])
+                    writer.writerow([row[0], row[1], row[2], alignment])
+
+                    xwr_list.append(len(cross_pairs)/len(alignment)) 
+                    all_alignments += len(alignment)
+                    cross_alignments += len(cross_pairs)
+
+                except:
+                    print("Could not perform alignment with SimAlign")
+                    print(lang)
+                    print(row)
+                    print()
+
+        try:
+            xwr_mean = np.mean(xwr_list)
+            xwr_std = np.std(xwr_list)
+            scores = [lang, system, all_alignments, cross_alignments, xwr_mean, xwr_std, len(xwr_list), version]
+            final_scores.append(scores)
+            print(scores)
+            print("------------------------------")
+        except ZeroDivisionError:
+            continue
 
 
 output_file = f"{inp}/results/{level}_alignment_scores.csv"
@@ -167,7 +175,7 @@ output_file = f"{inp}/results/{level}_alignment_scores.csv"
 
 with open(output_file, "w", newline='') as csvfile:
     writer = csv.writer(csvfile)
-    writer.writerow(["lang", "system", "all_alignments", "cross_alignments", "xwr_mean", "xwr_std", "xwr_observations"])
+    writer.writerow(["lang", "system", "all_alignments", "cross_alignments", "xwr_mean", "xwr_std", "xwr_observations", "version"])
     writer.writerows(final_scores)
 
 # tokens1 = tokenizer.tokenize(paragraph1)
