@@ -7,15 +7,15 @@ import string
 import argparse
 from utils import *
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '2'  # for one GPU
+os.environ['CUDA_VISIBLE_DEVICES'] = '4'  # for one GPU
 
 wtp = WtP("wtp-bert-mini")
 wtp.half().to("cuda:0")
 
 level = "sent"
 
-inputdir = f"../inputs/{level}s"
-outputdir = f"../inputs/target_sent_json_{level}-level"
+inputdir = f"../few-shot/inputs/{level}s"
+outputdir = f"../few-shot/inputs/target_sent_json_{level}-level"
 
 # make sure the output directory exists
 if not os.path.exists(outputdir):

@@ -17,6 +17,7 @@ parser.add_argument('-ps', '--parasrc', required=True, help='source file with pa
 parser.add_argument('-sf', '--sentfile', required=True, help='source file with sentence segments')
 parser.add_argument('-out', '--output', required=True, help='output file')
 parser.add_argument('-r', '--run_name', default="1", help='which run' )
+parser.add_argument('-s', '--suffix', required=False, type=str)
 
 args = parser.parse_args()
 
@@ -146,8 +147,8 @@ grouped_sens = align_sents_and_parasrc(parasrc, sentfile)
 # write the merged paragraphs to a file
 nameparts = os.path.basename(sentfile).split(".")
 output = ".".join(nameparts[0:3]) + f".merged.{run}.csv"
-output = output.replace("gpt3", "gpt3mch")
+output = output.replace("gpt3", f"gpt3{args.suffix}")
 print(output)
-output = output.replace("gpt4", "gpt4mch")
+output = output.replace("gpt4", f"gpt4{args.suffix}")
 output = os.path.join(outputdir, output)
 write_to_file(output, grouped_sens)

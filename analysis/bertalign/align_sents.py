@@ -12,7 +12,7 @@ Aligns sentences and calculates "n2m", "n2mR", "length_var", "merges", "splits"
 """
 tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-cased')
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '2'
+os.environ['CUDA_VISIBLE_DEVICES'] = '4'
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--level", "-l", type=str, required=True, help='provide "sent" or "para"')
@@ -24,9 +24,9 @@ output_dir = args.output_dir
 
 languages = set()
 
-input_dir = f'../../inputs/target_sent_json_{level}-level'
+input_dir = f'{output_dir}/inputs/target_sent_json_{level}-level'
 
-output_dir = f"../{output_dir}/output/aligned_sentences_{level}"
+output_dir = f"{output_dir}/output/aligned_sentences_{level}"
 os.makedirs(output_dir, exist_ok=True)
 
 for file in os.listdir(input_dir):
@@ -67,7 +67,7 @@ for lang in languages:
                 if langs == lang and "source" not in file:
                     target_file = os.path.join(input_dir, file)
 
-                    print(system)
+                    print(system, file.replace(".split.json", ""))
 
                     csvfile = ".".join([langs, level, system, "csv"])
                     output_file = os.path.join(output_dir, csvfile)
@@ -120,14 +120,14 @@ for lang in languages:
 
                             
 
-                    final_scores.append([langs, system, slines, count_n2m, count_n2m/slines, length_var/slines, merges, splits, merges/slines, splits/slines])
+                    final_scores.append([langs, system, slines, count_n2m, count_n2m/slines, length_var/slines, merges, splits, merges/slines, splits/slines, file.replace(".split.json", "")])
 
         except Exception as e:
             print(e)
 
-with open(f"${output_dir}/results/{level}_n2m_scores.csv", "w") as outf:
+with open(f"{args.output_dir}/results/{level}_n2m_scores.csv", "w") as outf:
     writer = csv.writer(outf)
-    writer.writerow(["lang", "system", "total_src_sents", "n2m", "n2mR", "length_var", "merges", "splits", "mergesRatio", "splitsRatio"])
+    writer.writerow(["lang", "system", "total_src_sents", "n2m", "n2mR", "length_var", "merges", "splits", "mergesRatio", "splitsRatio", "file"])
     for score in final_scores:
         writer.writerow(score)
 
