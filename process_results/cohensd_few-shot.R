@@ -1,6 +1,6 @@
 # empty environment
 rm(list=ls())
-dev.off()
+# dev.off()
 
 # Load the necessary library
 # install.packages("data.table")
@@ -8,15 +8,15 @@ dev.off()
 library(data.table)
 library(ggplot2)
 # Install and load the effsize package
-install.packages("effsize")
+# install.packages("effsize")
 library(effsize)
 
 
 # Read the first CSV file into a data frame
-paras_table <- fread("../few-shot/results/para_alignment_scores.csv")
+paras_table <- fread("../few-shot/results/para_syntax_scores.csv")
 
 # Read the second CSV file into a data frame
-sents_table <- fread("../few-shot/results/sent_alignment_scores.csv")
+sents_table <- fread("../few-shot/results/sent_syntax_scores.csv")
 
 # Add a column to each data frame to indicate the level
 paras_table$Level <- "Paragraph"
@@ -24,23 +24,42 @@ sents_table$Level <- "Sentence"
 
 combined_table <- rbind(paras_table, sents_table)
 
+# exclude rows where lang in en-de_news or de-en_news
+combined_table <- combined_table[lang != "en-de_news" & lang != "de-en_news"]
+combined_table <- combined_table[system != "gpt4mch"]
+
 # Convert 'system' and 'Level' to factor for better plotting control
 combined_table$system <- factor(
   combined_table$system, levels = unique(combined_table$system)
 )
-combined_table$Level <- factor(
-  combined_table$Level, levels = c('Paragraph', 'Sentence')
-) # nolint
-
-# order the levels of 'system' with "human" first
-combined_table$system <- factor(
-  combined_table$system, levels = c("human", "gpt3hum", "gpt3mch", "gpt4hum", "gpt4mch")
-)
 
 # select only the necessary columns in the combined table
-combined_table <- combined_table[, .(lang, system, xwr_mean, xwr_std, xwr_observations, Level)]
+combined_table <- combined_table[, .(lang, system, xwr_mean, xwr_std, n2mR,length_var, Level)]
+
+# Aggregate the data by language, system, and level to calculate the mean values
+combined_table <- combined_table[, .(
+  xwr_mean = mean(xwr_mean),
+  xwr_std = mean(xwr_std),
+  n2mR = mean(n2mR),
+  length_var = mean(length_var)# Summing up the observations if necessary
+), by = .(lang, system, Level)]
+
+# Convert 'system' and 'Level' to factor for better plotting control
+combined_table$system <- factor(
+  combined_table$system, levels = c("human", "gpt3", "gpt4hum", "nmt")
+)
+combined_table$Level <- factor(
+  combined_table$Level, levels = c('Paragraph', 'Sentence')
+)
+
+# Split data by language after preprocessing
+list_df <- split(combined_table, combined_table$lang)
+
+# Continue with the existing functions for analysis
+
 
 list_df <- split(combined_table, combined_table$lang)
+
 
 # Create an empty dataframe to store the results
 results_df <- data.frame(Language = character(),
@@ -56,245 +75,102 @@ t_test_results_df <- data.frame(Language = character(),
                          p_value = numeric(),
                          stringsAsFactors = FALSE)
 
-# Function to calculate Cohen's d effect size
 calculate_cohens_d <- function(lang_df) {
-  # Filter data for Paragraph and Sentence levels separately
   paragraph_data <- lang_df[lang_df$Level == "Paragraph", ]
   sentence_data <- lang_df[lang_df$Level == "Sentence", ]
   
-  # Get the human mean and standard deviation at paragraph level
-  human_mean_paragraph <- paragraph_data[paragraph_data$system == "human", ]$xwr_mean
-  human_sd_paragraph <- paragraph_data[paragraph_data$system == "human", ]$xwr_std
-  human_observation <- paragraph_data[paragraph_data$system == "human", ]$xwr_observations
+  if (nrow(paragraph_data) == 0) {
+    print(paste("No paragraph data for language:", lang_df$lang[1]))
+    return()
+  }
   
-  # Loop through each system at both paragraph and sentence levels
-  systems <- unique(c("gpt3hum", "gpt3mch", "gpt4hum", "gpt4mch"))
+  if (!any(paragraph_data$system == "human")) {
+    print(paste("No human data for paragraph level in language:", lang_df$lang[1]))
+    return()
+  }
+  
+  # Get human mean and standard deviation at paragraph level
+  human_data <- paragraph_data[paragraph_data$system == "human", ]
+  human_mean <- mean(human_data$xwr_mean)  # ensure aggregation if not already done
+  human_sd <- mean(human_data$xwr_std)  # standard deviation can be aggregated similarly if appropriate
+  human_observation <- sum(human_data$xwr_observations)  # summing up if multiple entries
+  
+  systems <- setdiff(unique(paragraph_data$system), "human")
+  
   for (sys in systems) {
-    # Check if there is data available for the system at paragraph level
-    if (any(paragraph_data$system == sys)) {
-      # Get the mean and standard deviation for the system at paragraph level
-      sys_mean_paragraph <- paragraph_data[paragraph_data$system == sys, ]$xwr_mean
-      sys_sd_paragraph <- paragraph_data[paragraph_data$system == sys, ]$xwr_std
-      sys_observation <- paragraph_data[paragraph_data$system == sys, ]$xwr_observations
-
-      # total number of observations
-      total_observation <- human_observation + sys_observation
-
-      # calculate the pooled standard deviation
-      pooled_sd <- sqrt(((human_observation - 1) * human_sd_paragraph^2 + (sys_observation - 1) * sys_sd_paragraph^2) / (human_observation + sys_observation - 2))
+    sys_data <- paragraph_data[paragraph_data$system == sys, ]
+    if (nrow(sys_data) > 0) {
+      sys_mean <- mean(sys_data$xwr_mean)
+      sys_sd <- mean(sys_data$xwr_std)
+      sys_observation <- sum(sys_data$xwr_observations)
       
-      # Calculate Cohen's d effect size at paragraph level with hedge's g correction
-      cohens_d_paragraph <- (sys_mean_paragraph - human_mean_paragraph) / pooled_sd * sqrt((total_observation - 3) / (total_observation - 2.25))
-      # cohens_d_paragraph <- (sys_mean_paragraph - human_mean_paragraph) / sqrt((human_sd_paragraph^2 + sys_sd_paragraph^2) / 2)
+      pooled_sd <- sqrt(((human_observation - 1) * human_sd^2 + (sys_observation - 1) * sys_sd^2) / (human_observation + sys_observation - 2))
+      cohens_d <- (sys_mean - human_mean) / pooled_sd
       
-      # Add the results to the dataframe
-      results_df <<- rbind(results_df, data.frame(Language = lang_df$lang[1],
-                                                 System = sys,
-                                                 Level = "Paragraph",
-                                                 Cohen_d = cohens_d_paragraph,
-                                                 stringsAsFactors = FALSE))
+      results_df <<- rbind(results_df, data.frame(Language = lang_df$lang[1], System = sys, Level = "Paragraph", Cohen_d = cohens_d, stringsAsFactors = FALSE))
+    } else {
+      print(paste("No data for system", sys, "in language", lang_df$lang[1], "at Paragraph level."))
     }
-    # Check if there is data available for the system at sentence level
-    if (any(sentence_data$system == sys)) {
-    
-    # Get the mean and standard deviation for the system at sentence level
-    sys_mean_sentence <- sentence_data[sentence_data$system == sys, ]$xwr_mean
-    sys_sd_sentence <- sentence_data[sentence_data$system == sys, ]$xwr_std
-    sys_observation <- sentence_data[sentence_data$system == sys, ]$xwr_observations
-
-    # total number of observations
-    total_observation <- human_observation + sys_observation
-
-    # calculate the pooled standard deviation
-    pooled_sd_sentence <- sqrt(((human_observation - 1) * human_sd_paragraph^2 + (sys_observation - 1) * sys_sd_sentence^2) / (human_observation + sys_observation - 2))
-    
-    # Calculate Cohen's d effect size at sentence level with hedge's g correction
-    cohens_d_sentence <- (sys_mean_sentence - human_mean_paragraph) / pooled_sd_sentence * sqrt((total_observation - 3) / (total_observation - 2.25))
-    
-    
-    # Add the results to the dataframe
-    results_df <<- rbind(results_df, data.frame(Language = lang_df$lang[1],
-                                               System = sys,
-                                               Level = "Sentence",
-                                               Cohen_d = cohens_d_sentence,
-                                               stringsAsFactors = FALSE))
   }
 }
+
+# Execute function and debug
+for (lang_df in list_df) {
+  print(paste("Processing language:", lang_df$lang[1]))
+  calculate_cohens_d(lang_df)
 }
 
-# function to calculcate the Welch t-test (not assuming equal standard deviations)
+print(results_df)
+
 calculate_t_test <- function(lang_df) {
   # Filter data for Paragraph and Sentence levels separately
   paragraph_data <- lang_df[lang_df$Level == "Paragraph", ]
   sentence_data <- lang_df[lang_df$Level == "Sentence", ]
   
-  # Get the human mean and standard deviation at paragraph level
+  # Ensure human data exists at paragraph level
+  if (nrow(paragraph_data[paragraph_data$system == "human", ]) == 0) {
+    print(paste("No human data for", lang_df$lang[1], "at Paragraph level. Skipping..."))
+    return()
+  }
+  
   human_mean_paragraph <- paragraph_data[paragraph_data$system == "human", ]$xwr_mean
   human_sd_paragraph <- paragraph_data[paragraph_data$system == "human", ]$xwr_std
   sample1_n <- paragraph_data[paragraph_data$system == "human", ]$xwr_observations
   
-  # Loop through each system at both paragraph and sentence levels
-  systems <- unique(c("gpt3hum", "gpt3mch", "gpt4hum", "gpt4mch"))
+  systems <- unique(c("gpt3", "gpt4hum", "nmt"))
   for (sys in systems) {
-    # Check if there is data available for the system at paragraph level
-    if (any(paragraph_data$system == sys)) {
-      # Get the mean and standard deviation for the system at paragraph level
+    if (nrow(paragraph_data[paragraph_data$system == sys, ]) > 0) {
+      # Proceed with paragraph-level t-test calculations
       sys_mean_paragraph <- paragraph_data[paragraph_data$system == sys, ]$xwr_mean
       sys_sd_paragraph <- paragraph_data[paragraph_data$system == sys, ]$xwr_std
       sample2_n_para <- paragraph_data[paragraph_data$system == sys, ]$xwr_observations
       
-      # Calculate Welch t-test at paragraph level
-      # Calculate t-test at paragraph level
       se_diff_para <- sqrt((human_sd_paragraph^2 / sample1_n) + (sys_sd_paragraph^2 / sample2_n_para))
       t_statistic_para <- abs(human_mean_paragraph - sys_mean_paragraph) / se_diff_para
-
-      # Get degrees of freedom using Welch's correction
       df_para <- (human_sd_paragraph^2 / sample1_n + sys_sd_paragraph^2 / sample2_n_para)^2 /
-      (human_sd_paragraph^4 / (sample1_n^2 * (sample1_n - 1)) +
-      sys_sd_paragraph^4 / (sample2_n_para^2 * (sample2_n_para - 1)))
-
-      # Calculate p-value using t-distribution
+        (human_sd_paragraph^4 / (sample1_n^2 * (sample1_n - 1)) + sys_sd_paragraph^4 / (sample2_n_para^2 * (sample2_n_para - 1)))
       p_value_para <- 2 * pt(abs(t_statistic_para), df_para, lower.tail = FALSE)
-
-      # Add the results to the dataframe
-      t_test_results_df <<- rbind(t_test_results_df, data.frame(Language = lang_df$lang[1],
-                                                 System = sys,
-                                                 Level = "Paragraph",
-                                                 t_statistic = t_statistic_para,
-                                                 p_value = p_value_para,
-                                                 stringsAsFactors = FALSE))
-
+      
+      t_test_results_df <<- rbind(t_test_results_df, data.frame(Language = lang_df$lang[1], System = sys, Level = "Paragraph", t_statistic = t_statistic_para, p_value = p_value_para, stringsAsFactors = FALSE))
     }
-      # Check if there is data available for the system at sentence level
-    if (any(sentence_data$system == sys)) {
-      # calculate the t-test at sentence level
+    
+    if (nrow(sentence_data[sentence_data$system == sys, ]) > 0) {
+      # Proceed with sentence-level t-test calculations
       sys_mean_sentence <- sentence_data[sentence_data$system == sys, ]$xwr_mean
       sys_sd_sentence <- sentence_data[sentence_data$system == sys, ]$xwr_std
       sample2_n_sent <- sentence_data[sentence_data$system == sys, ]$xwr_observations
-
-      # Calculate t-test at sentence level
-      se_diff <- sqrt(((human_sd_paragraph^2)/ sample1_n) + ((sys_sd_sentence^2)/ sample2_n_sent))
-
-      t_statistic_sent <- abs(human_mean_paragraph - sys_mean_sentence) / se_diff
-
-      # get degrees of freedom using Welch's correction
+      
+      se_diff_sent <- sqrt((human_sd_paragraph^2 / sample1_n) + (sys_sd_sentence^2 / sample2_n_sent))
+      t_statistic_sent <- abs(human_mean_paragraph - sys_mean_sentence) / se_diff_sent
       df_sent <- (human_sd_paragraph^2 / sample1_n + sys_sd_sentence^2 / sample2_n_sent)^2 /
-      (human_sd_paragraph^4 / (sample1_n^2 * (sample1_n - 1)) +
-      sys_sd_sentence^4 / (sample2_n_sent^2 * (sample2_n_sent - 1)))
-
-      # calculate p-value
+        (human_sd_paragraph^4 / (sample1_n^2 * (sample1_n - 1)) + sys_sd_sentence^4 / (sample2_n_sent^2 * (sample2_n_sent - 1)))
       p_value_sent <- 2 * pt(abs(t_statistic_sent), df_sent, lower.tail = FALSE)
-
-      # Add the results to the dataframe
-      t_test_results_df <<- rbind(t_test_results_df, data.frame(Language = lang_df$lang[1],
-                                                 System = sys,
-                                                 Level = "Sentence",
-                                                 t_statistic = t_statistic_sent,
-                                                 p_value = p_value_sent,
-                                                 stringsAsFactors = FALSE))
-}
-}
+      
+      t_test_results_df <<- rbind(t_test_results_df, data.frame(Language = lang_df$lang[1], System = sys, Level = "Sentence", t_statistic = t_statistic_sent, p_value = p_value_sent, stringsAsFactors = FALSE))
+    }
+  }
 }
 
-
-# Iterate over each language dataframe in the list_df
-for (lang_df in list_df) {
-  calculate_cohens_d(lang_df)
-}
-
-# Print the combined results dataframe
-print(results_df)
-
-# Save the results dataframe to a CSV file
-write.csv(results_df, file = "../few-shot/results/cohen_d_effect_size_humch.csv", row.names = FALSE)
-
-# Plot the effect size results
-ggplot(results_df, aes(x = System, y = Cohen_d, fill = Level)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  facet_wrap(~Language, scales = "free") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(hjust = 0.5, angle = 45)) +
-  labs(title = "Cohen's d Effect Size with Hedge's g Correction for Systems' XWR as Compared to Human Values",
-       x = NULL,
-       y = NULL,
-       fill = "Level") +
-  scale_fill_manual(values = c("Paragraph" = "lightblue", "Sentence" = "gray")) +
-  theme(legend.position = "bottom") +
-  theme(legend.title = element_blank()) +
-  theme(legend.text = element_text(size = 12)) +
-  theme(axis.text.x = element_text(size = 8)) +
-  theme(axis.text.y = element_text(size = 8)) +
-  theme(plot.title = element_text(size = 14)) +
-  theme(strip.text = element_text(size = 10)) +
-  theme(legend.key.size = unit(0.5, "cm")) +
-  theme(legend.key = element_rect(fill = "white", colour = "white")) +
-  theme(legend.background = element_rect(fill = "white", colour = "white"))
-
-
-# Save the plot to a file
-ggsave("../viz/few-shot_cohen_d_effect_size_humch.pdf", width = 12, height = 8, units = "in")
-
-# Perform t-test for each language
-for (lang_df in list_df) {
-  calculate_t_test(lang_df)
-}
-
-# Print the combined results dataframe
-print(t_test_results_df)
-
-# Save the results dataframe to a CSV file
-write.csv(t_test_results_df, file = "../few-shot/results/t_test_results_humch.csv", row.names = FALSE)
-
-# Plot the t-test results
-ggplot(t_test_results_df, aes(x = System, y = t_statistic, fill = Level)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  facet_wrap(~Language, scales = "free") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(hjust = 0.5)) +
-  labs(title = "Welch t-test Results for Systems' XWR as Compared to Human XWR",
-       x = NULL,
-       y = NULL,
-       fill = "Level") +
-  scale_fill_manual(values = c("Paragraph" = "lightblue", "Sentence" = "gray")) +
-  theme(legend.position = "bottom") +
-  theme(legend.title = element_blank()) +
-  theme(legend.text = element_text(size = 12)) +
-  theme(axis.text.x = element_text(size = 8)) +
-  theme(axis.text.y = element_text(size = 8)) +
-  theme(plot.title = element_text(size = 14)) +
-  theme(strip.text = element_text(size = 10)) +  # Bold and size 12 subplot titles
-  theme(legend.key.size = unit(0.5, "cm")) +
-  theme(legend.key = element_rect(fill = "white", colour = "white")) +
-  theme(legend.background = element_rect(fill = "white", colour = "white"))
-
-# Save the plot to a file
-ggsave("../viz/t_test_results_humch.pdf", width = 12, height = 8, units = "in")
-
-# Plot the p-values
-ggplot(t_test_results_df, aes(x = System, y = p_value, fill = Level)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  facet_wrap(~Language, scales = "free") +
-  geom_hline(yintercept = 0.05, linetype = "dashed", color = "red") +  # Add threshold line
-  theme_minimal() +
-  theme(axis.text.x = element_text(hjust = 0.5)) +
-  labs(title = "Welch t-test p-values for systems' XWR as Compared to Human XWR",
-       x = NULL,
-       y = NULL,
-       fill = "Level") +
-  scale_fill_manual(values = c("Paragraph" = "lightblue", "Sentence" = "gray")) +
-  theme(legend.position = "bottom") +
-  theme(legend.title = element_blank()) +
-  theme(legend.text = element_text(size = 12)) +
-  theme(axis.text.x = element_text(size = 8)) +
-  theme(axis.text.y = element_text(size = 8)) +
-  theme(plot.title = element_text(size = 14)) +
-  theme(strip.text = element_text(size = 10)) +  # Bold and size 12 subplot titles
-  theme(legend.key.size = unit(0.5, "cm")) +
-  theme(legend.key = element_rect(fill = "white", colour = "white")) +
-  theme(legend.background = element_rect(fill = "white", colour = "white"))
-
-# Save the plot to a file
-ggsave("../viz/few-shot_p_value_results_humch.pdf", width = 12, height = 8, units = "in")
 
 # close device
 dev.off()

@@ -1,6 +1,6 @@
 # empty environment
 rm(list=ls())
-dev.off()
+# dev.off()
 
 # Load the necessary library
 # install.packages("data.table")
@@ -8,15 +8,15 @@ dev.off()
 library(data.table)
 library(ggplot2)
 # Install and load the effsize package
-install.packages("effsize")
+# install.packages("effsize")
 library(effsize)
 
 
 # Read the first CSV file into a data frame
-paras_table <- fread("../results/para_syntax_scores.csv")
+paras_table <- fread("../few-shot/results/para_syntax_scores.csv")
 
 # Read the second CSV file into a data frame
-sents_table <- fread("../results/sent_syntax_scores.csv")
+sents_table <- fread("../few-shot/results/sent_syntax_scores.csv")
 
 # Add a column to each data frame to indicate the level
 paras_table$Level <- "Paragraph"
@@ -30,15 +30,25 @@ combined_table$system <- factor(
 )
 combined_table$Level <- factor(
   combined_table$Level, levels = c('Paragraph', 'Sentence')
-) # nolint
+) 
+
+# Remove specific system if needed and rename systems
+combined_table <- combined_table[system != "gpt4mch"]
+combined_table[system == "gpt4hum", system := "gpt4"]
 
 # order the levels of 'system' with "human" first
 combined_table$system <- factor(
-  combined_table$system, levels = c("human", "gpt3", "gpt4", "llama2", "nmt")
+  combined_table$system, levels = c("human", "gpt3", "gpt4", "nmt")
 )
 
 # select only the necessary columns in the combined table
-combined_table <- combined_table[, .(lang, system, xwr_mean, xwr_std, xwr_observation, Level)]
+combined_table <- combined_table[, .(lang, system, xwr_mean, xwr_std, xwr_observations, Level)]
+
+# average rows with the same language, system, and level
+combined_table <- combined_table[, .(xwr_mean = mean(xwr_mean, na.rm = TRUE),
+                                     xwr_std = mean(xwr_std, na.rm = TRUE),
+                                     xwr_observations = sum(xwr_observations)),
+                                 by = .(lang, system, Level)]
 
 list_df <- split(combined_table, combined_table$lang)
 
@@ -65,17 +75,17 @@ calculate_cohens_d <- function(lang_df) {
   # Get the human mean and standard deviation at paragraph level
   human_mean_paragraph <- paragraph_data[paragraph_data$system == "human", ]$xwr_mean
   human_sd_paragraph <- paragraph_data[paragraph_data$system == "human", ]$xwr_std
-  human_observation <- paragraph_data[paragraph_data$system == "human", ]$xwr_observation
+  human_observation <- paragraph_data[paragraph_data$system == "human", ]$xwr_observations
   
   # Loop through each system at both paragraph and sentence levels
-  systems <- unique(c("gpt3", "gpt4", "llama2", "nmt"))
+  systems <- unique(c("gpt3", "gpt4", "nmt"))
   for (sys in systems) {
     # Check if there is data available for the system at paragraph level
     if (any(paragraph_data$system == sys)) {
       # Get the mean and standard deviation for the system at paragraph level
       sys_mean_paragraph <- paragraph_data[paragraph_data$system == sys, ]$xwr_mean
       sys_sd_paragraph <- paragraph_data[paragraph_data$system == sys, ]$xwr_std
-      sys_observation <- paragraph_data[paragraph_data$system == sys, ]$xwr_observation
+      sys_observation <- paragraph_data[paragraph_data$system == sys, ]$xwr_observations
 
       # total number of observations
       total_observation <- human_observation + sys_observation
@@ -100,7 +110,7 @@ calculate_cohens_d <- function(lang_df) {
     # Get the mean and standard deviation for the system at sentence level
     sys_mean_sentence <- sentence_data[sentence_data$system == sys, ]$xwr_mean
     sys_sd_sentence <- sentence_data[sentence_data$system == sys, ]$xwr_std
-    sys_observation <- sentence_data[sentence_data$system == sys, ]$xwr_observation
+    sys_observation <- sentence_data[sentence_data$system == sys, ]$xwr_observations
 
     # total number of observations
     total_observation <- human_observation + sys_observation
@@ -131,17 +141,17 @@ calculate_t_test <- function(lang_df) {
   # Get the human mean and standard deviation at paragraph level
   human_mean_paragraph <- paragraph_data[paragraph_data$system == "human", ]$xwr_mean
   human_sd_paragraph <- paragraph_data[paragraph_data$system == "human", ]$xwr_std
-  sample1_n <- paragraph_data[paragraph_data$system == "human", ]$xwr_observation
+  sample1_n <- paragraph_data[paragraph_data$system == "human", ]$xwr_observations
   
   # Loop through each system at both paragraph and sentence levels
-  systems <- unique(c("gpt3", "gpt4", "llama2", "nmt"))
+  systems <- unique(c("gpt3", "gpt4", "nmt"))
   for (sys in systems) {
     # Check if there is data available for the system at paragraph level
     if (any(paragraph_data$system == sys)) {
       # Get the mean and standard deviation for the system at paragraph level
       sys_mean_paragraph <- paragraph_data[paragraph_data$system == sys, ]$xwr_mean
       sys_sd_paragraph <- paragraph_data[paragraph_data$system == sys, ]$xwr_std
-      sample2_n_para <- paragraph_data[paragraph_data$system == sys, ]$xwr_observation
+      sample2_n_para <- paragraph_data[paragraph_data$system == sys, ]$xwr_observations
       
       # Calculate Welch t-test at paragraph level
       # Calculate t-test at paragraph level
@@ -170,7 +180,7 @@ calculate_t_test <- function(lang_df) {
       # calculate the t-test at sentence level
       sys_mean_sentence <- sentence_data[sentence_data$system == sys, ]$xwr_mean
       sys_sd_sentence <- sentence_data[sentence_data$system == sys, ]$xwr_std
-      sample2_n_sent <- sentence_data[sentence_data$system == sys, ]$xwr_observation
+      sample2_n_sent <- sentence_data[sentence_data$system == sys, ]$xwr_observations
 
       # Calculate t-test at sentence level
       se_diff <- sqrt(((human_sd_paragraph^2)/ sample1_n) + ((sys_sd_sentence^2)/ sample2_n_sent))
@@ -206,7 +216,7 @@ for (lang_df in list_df) {
 print(results_df)
 
 # Save the results dataframe to a CSV file
-write.csv(results_df, file = "../results/cohen_d_effect_size.csv", row.names = FALSE)
+write.csv(results_df, file = "../few-shot/results/cohen_d_effect_size.csv", row.names = FALSE)
 
 # Plot the effect size results
 ggplot(results_df, aes(x = System, y = Cohen_d, fill = Level)) +
@@ -214,7 +224,7 @@ ggplot(results_df, aes(x = System, y = Cohen_d, fill = Level)) +
   facet_wrap(~Language, scales = "free") +
   theme_minimal() +
   theme(axis.text.x = element_text(hjust = 0.5)) +
-  labs(title = "Cohen's d Effect Size with Hedge's g Correction for Systems' XWR as Compared to Human Values",
+  labs(title = "Cohen's d Effect Size with Hedge's g Correction for Systems' CWAR as Compared to Human Values",
        x = NULL,
        y = NULL,
        fill = "Level") +
@@ -228,11 +238,13 @@ ggplot(results_df, aes(x = System, y = Cohen_d, fill = Level)) +
   theme(strip.text = element_text(size = 10)) +
   theme(legend.key.size = unit(0.5, "cm")) +
   theme(legend.key = element_rect(fill = "white", colour = "white")) +
-  theme(legend.background = element_rect(fill = "white", colour = "white"))
+  theme(legend.background = element_rect(fill = "white", colour = "white")) +
+# add the line at zero
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red")
 
 
 # Save the plot to a file
-ggsave("../viz/cohen_d_effect_size.pdf", width = 12, height = 8, units = "in")
+ggsave("../viz/few-shot_cohen_d_effect_size.pdf", width = 12, height = 8, units = "in")
 
 # Perform t-test for each language
 for (lang_df in list_df) {
@@ -243,58 +255,18 @@ for (lang_df in list_df) {
 print(t_test_results_df)
 
 # Save the results dataframe to a CSV file
-write.csv(t_test_results_df, file = "../results/t_test_results.csv", row.names = FALSE)
+write.csv(t_test_results_df, file = "../few-shot/results/t_test_results.csv", row.names = FALSE)
 
-# Plot the t-test results
-ggplot(t_test_results_df, aes(x = System, y = t_statistic, fill = Level)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  facet_wrap(~Language, scales = "free") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(hjust = 0.5)) +
-  labs(title = "Welch t-test Results for Systems' XWR as Compared to Human XWR",
-       x = NULL,
-       y = NULL,
-       fill = "Level") +
-  scale_fill_manual(values = c("Paragraph" = "lightblue", "Sentence" = "gray")) +
-  theme(legend.position = "bottom") +
-  theme(legend.title = element_blank()) +
-  theme(legend.text = element_text(size = 12)) +
-  theme(axis.text.x = element_text(size = 8)) +
-  theme(axis.text.y = element_text(size = 8)) +
-  theme(plot.title = element_text(size = 14)) +
-  theme(strip.text = element_text(size = 10)) +  # Bold and size 12 subplot titles
-  theme(legend.key.size = unit(0.5, "cm")) +
-  theme(legend.key = element_rect(fill = "white", colour = "white")) +
-  theme(legend.background = element_rect(fill = "white", colour = "white"))
+#  combine the results of t_test_results_df and results_df
+combined_results_df <- merge(results_df, t_test_results_df, by = c("Language", "System", "Level"))
 
-# Save the plot to a file
-ggsave("../viz/t_test_results.pdf", width = 12, height = 8, units = "in")
+# sort by p_value in ascending order
+combined_results_df <- combined_results_df[order(combined_results_df$p_value), ]
 
-# Plot the p-values
-ggplot(t_test_results_df, aes(x = System, y = p_value, fill = Level)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  facet_wrap(~Language, scales = "free") +
-  geom_hline(yintercept = 0.05, linetype = "dashed", color = "red") +  # Add threshold line
-  theme_minimal() +
-  theme(axis.text.x = element_text(hjust = 0.5)) +
-  labs(title = "Welch t-test p-values for systems' XWR as Compared to Human XWR",
-       x = NULL,
-       y = NULL,
-       fill = "Level") +
-  scale_fill_manual(values = c("Paragraph" = "lightblue", "Sentence" = "gray")) +
-  theme(legend.position = "bottom") +
-  theme(legend.title = element_blank()) +
-  theme(legend.text = element_text(size = 12)) +
-  theme(axis.text.x = element_text(size = 8)) +
-  theme(axis.text.y = element_text(size = 8)) +
-  theme(plot.title = element_text(size = 14)) +
-  theme(strip.text = element_text(size = 10)) +  # Bold and size 12 subplot titles
-  theme(legend.key.size = unit(0.5, "cm")) +
-  theme(legend.key = element_rect(fill = "white", colour = "white")) +
-  theme(legend.background = element_rect(fill = "white", colour = "white"))
+# Save the combined results dataframe to a CSV file
+write.csv(combined_results_df, file = "../few-shot/results/combined_results.csv", row.names = FALSE)
 
-# Save the plot to a file
-ggsave("../viz/p_value_results.pdf", width = 12, height = 8, units = "in")
+# plot the n2mR results
 
 # close device
 dev.off()
