@@ -1,3 +1,5 @@
+This repository contains data preparation, translation, and analysis scripts used to evaluate and compare human and machine translations (GPT, NMT, LLaMA) across multiple languages. It supports sentence- and paragraph-level processing, alignment, and evaluation using structured pipelines. Data includes annotated literary translations and WMT test sets, with support for both automatic and manual quality checks. Output includes alignment scores, cross-word ratio (XWR), and structural variation metrics for multilingual translation systems.
+
 # Dataprep
 
 ## Standardize data format. Retrieve source sentences.
